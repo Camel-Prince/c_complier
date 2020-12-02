@@ -72,13 +72,16 @@ void AbstractAstNode:: printNodeInfo() {
     for(int i=0; i<depth*4; i++){
         prefix[i] = ' ';
     }
-    int stickNum = 0;
+    int i = 0;
     AbstractAstNode* father = this->parent;
-    while(stickNum < depth){
-        if (father->nextSibling == NULL)break;
+    while(i < depth){
+        if (father->nextSibling == NULL){
+            father = father->parent;
+            i++;
+        }
         else{
-            stickNum++;
-            prefix[(depth-stickNum)*4] = '|';
+            i++;
+            prefix[(depth-i)*4] = '|';
             father = father->parent;
         }
     }

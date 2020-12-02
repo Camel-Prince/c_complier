@@ -5,6 +5,7 @@
 enum class AstNodeType 
 {
     ROOT,
+    ID,
     EXPRESSION,
     CONST_INT,
     OPERATION,

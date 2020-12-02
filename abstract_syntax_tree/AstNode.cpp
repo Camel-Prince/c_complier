@@ -1,4 +1,5 @@
 #include "AstNode.h"
+#include <stack>
 
 AbstractAstNode:: AbstractAstNode(){
     this->parent = NULL;
@@ -65,6 +66,27 @@ void AbstractAstNode:: addNextSibling(AbstractAstNode* node) {
     else printf("Param is NULL!\n");
 }
 
+void AbstractAstNode:: printNodeInfo() {
+    int depth = this->depth;
+    char* prefix = new char[depth*4];
+    for(int i=0; i<depth*4; i++){
+        prefix[i] = ' ';
+    }
+    int stickNum = 0;
+    AbstractAstNode* father = this->parent;
+    while(stickNum < depth){
+        if (father->nextSibling == NULL)break;
+        else{
+            stickNum++;
+            prefix[(depth-stickNum)*4] = '|';
+            father = father->parent;
+        }
+    }
+    std::cout<<prefix<<"|____"
+            <<"Depth: "<<this->depth
+            <<" Content: "<<this->content
+            <<std::endl;
+}
 
 void updateSubAstDepth(AbstractAstNode* subRoot){
     if (subRoot == NULL) return;
@@ -73,4 +95,30 @@ void updateSubAstDepth(AbstractAstNode* subRoot){
     updateSubAstDepth(sibling);
     AbstractAstNode* child = subRoot->getFirstChild();
     updateSubAstDepth(subRoot->getFirstChild());
+}
+
+void printAst(AbstractAstNode* Root){
+    std::stack<AbstractAstNode* > nodeStack;
+    nodeStack.push(Root);
+    Root->isVisited = true;
+    Root->printNodeInfo();
+    while(!nodeStack.empty()){
+        AbstractAstNode* node = nodeStack.top();
+        AbstractAstNode* child = node->getFirstChild();
+        if(child != NULL && !child->isVisited){
+            nodeStack.push(child);
+            child->isVisited = true;
+            child->printNodeInfo();
+        }
+        else if (child == NULL || child->isVisited){
+            nodeStack.pop();
+            AbstractAstNode* sibling = node->getNextSibling();
+            if (sibling != NULL) {
+                nodeStack.push(sibling);
+                sibling->isVisited = true;
+                sibling->printNodeInfo();
+            }
+        }
+    }
+
 }

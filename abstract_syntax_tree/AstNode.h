@@ -1,10 +1,11 @@
 #ifndef _ASTNODE_H
 #define _ASTNODE_H
-#include <iostream>
 
+#include <iostream>
 enum class AstNodeType 
 {
     ROOT,
+    EXPRESSION,
     CONST_INT,
     OPERATION,
     STATEMENT,
@@ -12,7 +13,6 @@ enum class AstNodeType
     SELECT,
 
 };
-
 
 
 class AbstractAstNode {
@@ -37,6 +37,8 @@ public:
     inline AstNodeType getAstNodeType();
     inline int getDepth();
     inline void setDepth(int newDepth);
+    bool isVisited = false;
+    void printNodeInfo();
 };
 void printAst(AbstractAstNode* Root);
 void updateSubAstDepth(AbstractAstNode* subRoot); // 当某一节点的depth被跟更新时调用该函数来更新子节点和兄弟节点；

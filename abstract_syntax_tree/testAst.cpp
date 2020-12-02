@@ -1,8 +1,6 @@
-#include "AstNode.h"
-#include "AstNode.cpp"
 #include <iostream>
+#include "AstNode.cpp"
 using namespace std;
-
 int main(){
     cout<<"Test AstNode"<<endl;
     AbstractAstNode root = AbstractAstNode();
@@ -22,15 +20,17 @@ int main(){
     L23.addFirstChild(&L30);
     AbstractAstNode new_Root = AbstractAstNode();
     new_Root.addFirstChild(&root);
-    cout<<"Root Depth: "<<root.getDepth()<<endl;
-    cout<<"L10 Depth: "<<L10.getDepth()<<endl;
-    cout<<"L11 Depth: "<<L11.getDepth()<<endl;
-    cout<<"L20 Depth: "<<L20.getDepth()<<endl;
-    cout<<"L21 Depth: "<<L21.getDepth()<<endl;
-    cout<<"L22 Depth: "<<L22.getDepth()<<endl;
-    cout<<"L23 Depth: "<<L23.getDepth()<<endl;
-    cout<<"L30 Depth: "<<L30.getDepth()<<endl;
-return 0;
+//    cout<<"Root Depth: "<<root.getDepth()<<endl;
+//    cout<<"L10 Depth: "<<L10.getDepth()<<endl;
+//    cout<<"L11 Depth: "<<L11.getDepth()<<endl;
+//    cout<<"L20 Depth: "<<L20.getDepth()<<endl;
+//    cout<<"L21 Depth: "<<L21.getDepth()<<endl;
+//    cout<<"L22 Depth: "<<L22.getDepth()<<endl;
+//    cout<<"L23 Depth: "<<L23.getDepth()<<endl;
+//    cout<<"L30 Depth: "<<L30.getDepth()<<endl;
+    // new_Root.printNodeInfo();
+    printAst(&new_Root);
+    return 0;
 }
 
 

@@ -1,59 +1,76 @@
 %{
 # include <stdio.h>
 # include <stdlib.h>
-# include "AST.h"
+# include "./abstract_syntax_tree/AstNode.h"
+#include <iostream>
+
+extern char *yytext;
+extern int yylex();
+extern void yyerror(char* s);
+extern FILE * yyin;
+AbstractAstNode* root;
 %}
 
 %union {
-  strcut ast *ast_node;
-  int number;
+  AbstractAstNode* ast;
+  // int ast;
+  char* str;
 }
 
 
 /* declare tokens */
-%token WHILE FOR IF ELSE THEN
-%token PRINTF SCANF
-%token INT
-%token IDENTIFIER
-%token <number> CONST 
-%token ADD SUB MUL DIV POW MOD
-%token EQ_OP GT_OP LT_OP GE_OP  LE_OP NE_OP
-%token AND OR NOT
+%right <str> ASSIGN_OP
+%left <ast> OR
+%left <ast> AND
+%left <str> EQ_OP NE_OP
+%left <str> GT_OP LT_OP GE_OP LE_OP 
+%left <ast> ADD SUB
+%left <ast> MUL DIV MOD
+%left <ast> POW
+%right <ast> NOT
+%token <str> PRINTF 
+%token <str> SCANF
+%token <str> INT
+%token <ast> IDENTIFIER
+%token <ast> CONST 
+
 %token EOL
-%token COMMA SEMI S_QUO D_QUO
+%nonassoc COMMA SEMI S_QUO D_QUO
+%nonassoc WHILE FOR IF ELSE THEN
 
-%type <ast>
-%type <ast>
-%%
-
-calclist: /* nothing */
- | calclist exp EOL { printf("= %d\n> ", $2); }
- | calclist EOL { printf("> "); } /* blank line or a comment */
- ;
-
-exp: factor
- | exp ADD exp { $$ = $1 + $3; }
- | exp SUB factor { $$ = $1 - $3; } 
- ;
-
-factor: term
- | factor MUL term { $$ = $1 * $3; }
- | factor DIV term { $$ = $1 / $3; }
- ;
-
-term: CONST
- | '(' exp ')' { $$ = $2; }
- ;
-
+%type <ast> Exp
 
 %%
-main(int argc, char** agrv)
+Program: Exp {
+  root = new AbstractAstNode(AstNodeType::ROOT,"Root");
+  $1 = new AbstractAstNode(AstNodeType::EXPRESSION, "Exp");
+  root->addFirstChild($1);
+  printAst(root);
+}
+        | 
+        ;
+Exp: CONST {$1 = new AbstractAstNode(AstNodeType::CONST_INT,"Const");}
+  |  IDENTIFIER
+  | Exp ASSIGN_OP Exp {printf("This is an Assign_Sentence!\n");}
+  | Exp ADD Exp {printf("This is an And_Sentence!\n");}
+  | Exp SUB Exp {printf("This is a Substract_Sentence!\n");}
+  | Exp MUL Exp {printf("This is a Multiply_Sentence!\n");}
+  | Exp DIV Exp {printf("This is a Divide_Sentence!\n");}
+  | Exp MOD Exp {printf("This is a Mod_Sentence!\n");}
+  | Exp POW Exp {printf("This is a Power_Sentence!\n");}
+  ;
+
+
+
+%%
+int  main(int argc, char** agrv)
 {
   printf("> "); 
   yyparse();
+  return 0;
 }
 
-yyerror(char *s)
+void yyerror(char *s)
 {
-  fprintf(stderr, "error: %s\n", s);
+  // fprintf(stderr, "error: %s\n", s);
 }

@@ -6,41 +6,7 @@ WHITE_SPACE [ \t]
 // #  include "parser.tab.h"//该文件由后面的parser.y生成。主要定义了token 的值。和yylval变量
 # include <stdio.h>
 # include "parser.tab.h"
-# include "AST.h"
 
-// enum yytokentype{
-//     WHILE = 258,
-//     FOR = 259,
-//     IF  = 260,
-//     PRINTF = 261,
-//     SCANF = 262,
-//     INT = 263,
-//     IDENTIFIER = 264,
-//     CONST = 265, //声明token
-//     ADD = 266,
-//     SUB = 267,
-//     MUL = 268,
-//     DIV = 269,
-//     POW = 270,
-//     MOD = 271,
-//     EQ_OP = 272, 
-//     GT_OP = 273,
-//     LT_OP = 274,
-//     GE_OP = 275,
-//     LE_OP = 276, 
-//     NE_OP = 278,
-//     AND = 279,
-//     OR = 280,
-//     NOT = 281,
-//     EOL = 282,
-//     ELSE = 283，
-//     THEN = 284，
-//     S_QUO = 285，
-//     D_QUO = 286，
-//     SEMI = 287,
-//     COMMA = 288
-// };
-// int yylval;
 %}
 
 %% 
@@ -57,7 +23,7 @@ WHITE_SPACE [ \t]
 "int"       {printf("KEY WORDS: %s \n", yytext); return INT; }
 ","         {printf("KEY WORDS: %s \n", yytext); return COMMA; }
 ";"         {printf("KEY WORDS: %s \n", yytext); return SEMI; }
-"="         {printf("KEY WORDS: %s \n", yytext); return '='; }
+"="         {printf("KEY WORDS: %s \n", yytext); return ASSIGN_OP; }
 "("         {printf("KEY WORDS: %s \n", yytext); return '('; }
 ")"         {printf("KEY WORDS: %s \n", yytext); return ')'; }
 "{"         {printf("KEY WORDS: %s \n", yytext); return '{'; }
@@ -67,11 +33,11 @@ WHITE_SPACE [ \t]
 {LETTER}([a-zA-Z_]|{DIGIT})*  {printf("ID: %s\n; ", yytext); return IDENTIFIER;  }
 
 
-[+-]?[1-9]{DIGIT}* {yylval.number = atoi(yytext); printf("CONST TYPE: int VALUE: %d\n", yylval.number); return CONST; }
+[+-]?[1-9]{DIGIT}* {yylval.str = yytext; printf("CONST TYPE: int VALUE: %s\n", yylval.str); return CONST; }
 
 
-"+"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return ADD; /* 加 */}
-"-"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return SUB; /* 减 */}
+"+"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return ADD; /* 加 addition*/}
+"-"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return SUB; /* 减 substraction*/}
 "*"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return MUL; /* 乘 */}
 "/"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return DIV; /* 除 */}
 "%"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return MOD; /* 取余 */}
@@ -92,7 +58,7 @@ WHITE_SPACE [ \t]
 
 [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }
 "//"[^\n]*   {/* DO NOTHING */}
-{WHITE_SPACE} {count(); /* ignore white space */ }
+{WHITE_SPACE} { /* ignore white space */ }
 .       {printf("ERROR!!"); }
 %%
 

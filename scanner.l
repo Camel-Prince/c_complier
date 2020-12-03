@@ -30,15 +30,15 @@ WHITE_SPACE [ \t]
 "}"         {printf("KEY WORDS: %s \n", yytext); return '}'; }
 
 
-{LETTER}([a-zA-Z_]|{DIGIT})*  {printf("ID: %s\n; ", yytext); return IDENTIFIER;  }
+{LETTER}([a-zA-Z_]|{DIGIT})*  {yylval.str = strdup(yytext);/*printf("ID: %s\n; ", yytext);*/ return IDENTIFIER;  }
 
 
-[+-]?[1-9]{DIGIT}* {yylval.str = yytext; printf("CONST TYPE: int VALUE: %s\n", yylval.str); return CONST; }
+[-]?[1-9]{DIGIT}* {yylval.str = strdup(yytext); /*printf("CONST TYPE: int VALUE: %s\n", yylval.str);*/ return CONST; }
 
 
-"+"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return ADD; /* 加 addition*/}
+"+"    {/*printf("ALOGRITHM OPERARION: %s \n", yytext);*/ return ADD; /* 加 addition*/}
 "-"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return SUB; /* 减 substraction*/}
-"*"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return MUL; /* 乘 */}
+"*"    {/*printf("ALOGRITHM OPERARION: %s \n", yytext);*/ return MUL; /* 乘 */}
 "/"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return DIV; /* 除 */}
 "%"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return MOD; /* 取余 */}
 "^"    {printf("ALOGRITHM OPERARION: %s \n", yytext); return POW; /* 求幂 */}
@@ -61,18 +61,3 @@ WHITE_SPACE [ \t]
 {WHITE_SPACE} { /* ignore white space */ }
 .       {printf("ERROR!!"); }
 %%
-
-// int main(int argc, char** argv){
-
-//     if(argc > 1){
-//         if(!(yyin = fopen(argv[1], "r"))){
-//             perror(argv[1]);
-//             return 1;
-//         }
-//     }
-//     while(1){
-//         yylex();
-//     }
-    
-//     return 0;
-// }

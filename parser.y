@@ -31,8 +31,8 @@ AbstractAstNode* root;
 %token <str> PRINTF 
 %token <str> SCANF
 %token <str> INT
-%token <ast> IDENTIFIER
-%token <ast> CONST 
+%token <str> IDENTIFIER
+%token <str> CONST 
 
 %token EOL
 %nonassoc COMMA SEMI S_QUO D_QUO
@@ -42,22 +42,76 @@ AbstractAstNode* root;
 
 %%
 Program: Exp {
-  root = new AbstractAstNode(AstNodeType::ROOT,"Root");
-  $1 = new AbstractAstNode(AstNodeType::EXPRESSION, "Exp");
+  root = new AbstractAstNode(AstNodeType::ROOT,"Program");
   root->addFirstChild($1);
   printAst(root);
 }
-        | 
-        ;
-Exp: CONST {$1 = new AbstractAstNode(AstNodeType::CONST_INT,"Const");}
-  |  IDENTIFIER
-  | Exp ASSIGN_OP Exp {printf("This is an Assign_Sentence!\n");}
-  | Exp ADD Exp {printf("This is an And_Sentence!\n");}
-  | Exp SUB Exp {printf("This is a Substract_Sentence!\n");}
-  | Exp MUL Exp {printf("This is a Multiply_Sentence!\n");}
-  | Exp DIV Exp {printf("This is a Divide_Sentence!\n");}
-  | Exp MOD Exp {printf("This is a Mod_Sentence!\n");}
-  | Exp POW Exp {printf("This is a Power_Sentence!\n");}
+  | 
+  ;
+Exp: CONST {
+  // 注意token和type的不同；token需要构造出来节点对象；
+  printf("CONST Reduced To Exp!\n");
+  AbstractAstNode* node = new AbstractAstNode(AstNodeType::EXPRESSION,"Const_Exp");
+  AbstractAstNode* const_node = new AbstractAstNode(AstNodeType::CONST_INT, $1);
+  node->addFirstChild(const_node);
+  $$ = node;
+  }
+  |  IDENTIFIER {
+    printf("ID Reduced To Exp!\n");
+    AbstractAstNode* node = new AbstractAstNode(AstNodeType::EXPRESSION,"ID_Exp");
+    AbstractAstNode* id_node = new AbstractAstNode(AstNodeType::ID, $1);
+    node->addFirstChild(id_node);
+    $$ = node;
+    }
+  | Exp ASSIGN_OP Exp {
+    printf("Assign_Sentence Reduced!\n");
+    AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Assign");
+    node->addFirstChild($1);
+    $1->addNextSibling($3);
+    $$ = node;
+  }
+  | Exp ADD Exp {
+    printf("And_Sentence Reduced!\n");
+    AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Addition");
+    node->addFirstChild($1);
+    $1->addNextSibling($3);
+    $$ = node;
+  }
+  | Exp SUB Exp {
+    printf("Substract_Sentence Reduced!\n");
+    AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Substraction");
+    node->addFirstChild($1);
+    $1->addNextSibling($3);
+    $$ = node;
+    }
+  | Exp MUL Exp {
+    printf("Multiply_Sentence Reduced!\n");
+    AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Multipliy");
+    node->addFirstChild($1);
+    $1->addNextSibling($3);
+    $$ = node;
+  }
+  | Exp DIV Exp {
+    printf("Divide_Sentence Reduced!\n");
+    AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Divide");
+    node->addFirstChild($1);
+    $1->addNextSibling($3);
+    $$ = node;
+    }
+  | Exp MOD Exp {
+    printf("Mod_Sentence Reduced!\n");
+    AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Mod");
+    node->addFirstChild($1);
+    $1->addNextSibling($3);
+    $$ = node;
+    }
+  | Exp POW Exp {
+    printf("Power_Sentence Reduced!\n");
+    AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Power");
+    node->addFirstChild($1);
+    $1->addNextSibling($3);
+    $$ = node;
+    }
   ;
 
 

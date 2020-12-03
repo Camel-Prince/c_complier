@@ -86,8 +86,8 @@ void AbstractAstNode:: printNodeInfo() {
         }
     }
     std::cout<<prefix<<"|____"
-            <<"Depth: "<<this->depth
-            <<" Content: "<<this->content
+            <<"Content: "<<this->content
+            <<" Depth: "<<this->depth
             <<std::endl;
 }
 

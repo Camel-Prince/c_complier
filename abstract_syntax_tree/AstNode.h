@@ -30,7 +30,6 @@ public:
     AbstractAstNode(AstNodeType nodeType, char* content = NULL);
     void addFirstChild(AbstractAstNode* node);
     void addNextSibling(AbstractAstNode* node);
-    // void setParent(AbstractAstNode* node);
     inline AbstractAstNode* getParent();
     inline AbstractAstNode* getFirstChild();
     inline AbstractAstNode* getNextSibling();

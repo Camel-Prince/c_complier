@@ -29,6 +29,14 @@ AbstractAstNode* AbstractAstNode:: getFirstChild(){
 AbstractAstNode* AbstractAstNode:: getNextSibling(){
     return this->nextSibling;
 }
+// AbstractAstNode* AbstractAstNode:: getLastSiblingNode(){
+//     AbstractAstNode* t = this;
+//     while (t->nextSibling != NULL)
+//     {
+//         t = t->nextSibling;
+//     }
+//     return t;
+// }
 
 std::string AbstractAstNode:: getContent(){
     return this->content;
@@ -36,6 +44,10 @@ std::string AbstractAstNode:: getContent(){
 
 int AbstractAstNode:: getDepth(){
     return this->depth;
+}
+
+AstNodeType AbstractAstNode:: getAstNodeType(){
+    return this->nodeType;
 }
 
 void AbstractAstNode:: setDepth(int newDepth){
@@ -124,4 +136,10 @@ void printAst(AbstractAstNode* Root){
         }
     }
 
+}
+
+AbstractAstNode* getIDNameFromSingleDefStmt(AbstractAstNode* def_stmt){
+    AbstractAstNode* re = def_stmt;
+    re = re->getFirstChild()->getFirstChild()->getNextSibling()->getFirstChild()->getFirstChild()->getFirstChild();
+    return re;
 }

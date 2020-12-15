@@ -4,7 +4,7 @@
 #include <iostream>
 enum class AstNodeType 
 {
-    ROOT,
+    ROOT = 0,
     ID,
     EXPRESSION,
     CONST_INT,

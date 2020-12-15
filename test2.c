@@ -2,7 +2,7 @@ int main() {
     int a = 1, b = 2;
     int c = 2;
     int i = 0;
-    if            (a)
+    if(a)
 
     if(b)
     if(c) 

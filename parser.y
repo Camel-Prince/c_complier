@@ -1,10 +1,11 @@
 %{
-# include "./abstract_syntax_tree/AstNode.h"
-# include <stdio.h>
-# include <stdlib.h>
+#include "./abstract_syntax_tree/AstNode.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <stack>
 #include "./symbol_table/symbol.h"
+#include "./intermidiate_code/interCode.h"
 extern char *yytext;
 extern int yylex();
 extern void yyerror(char* s);
@@ -80,6 +81,12 @@ Program:
         root = new AbstractAstNode(AstNodeType::ROOT,"Program");
         root->addFirstChild($1);
         printAst(root);
+    }
+    | Exp {
+        root = new AbstractAstNode(AstNodeType::ROOT,"Program");
+        root->addFirstChild($1);
+        printAst(root);
+        // just for test; shoud be deleted if completed!
     }
   ;
 //with one or more block
@@ -588,14 +595,14 @@ Fordef:
 //expression
 Exp:
     CONST {
-      printf("exp->const \n");
+        // printf("exp->const \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::EXPRESSION,"Const_Exp");
         AbstractAstNode* const_node = new AbstractAstNode(AstNodeType::CONST_INT, $1);
         node->addFirstChild(const_node);
         $$ = node;
     }
   | /*IDENTIFIER {
-    printf("exp->identfier \n");
+        // printf("exp->identfier \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::EXPRESSION,"ID_Exp");
         AbstractAstNode* id_node = new AbstractAstNode(AstNodeType::ID, $1);
         node->addFirstChild(id_node);
@@ -818,6 +825,8 @@ int  main(int argc, char** argv)
   do {
 		yyparse();
 	} while(!feof(yyin));
+  InterCode interCode = InterCode(root);
+  interCode.Root_Generate();
   return 0;
 
 }

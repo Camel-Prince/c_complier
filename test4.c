@@ -18,7 +18,13 @@ int main() {
             c = c+1;
            int c = 9;
        }
+    }else if(a > 0)
+    {
+        printf("asdf");
+        if(b < 9){
+            b=b+1;
+        }
     }
-    // int a = 8;
+    
     return 0;
 }

@@ -632,7 +632,7 @@ Exp:
         $$ = node;
     }
   | Exp MUL Exp {
-        AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Multipliy");
+        AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Multiply");
         node->addFirstChild($1);
         $1->addNextSibling($3);
         $$ = node;

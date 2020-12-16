@@ -1,5 +1,7 @@
 #include "interCode.h"
 #include <typeinfo>
+#include <sstream>
+#include <string>
 
 /***
  * 
@@ -11,8 +13,8 @@
 QuadItem:: QuadItem(Symbol* result, OpType op, int arg1, int arg2){
    this->result.var = result;
    this->op = op;
-   this->arg1.literal = arg1;
-   this->arg2.literal = arg2;
+   this->arg1.target = arg1;
+   this->arg2.target = arg2;
    this->quad_item_type = 1;
 }
 
@@ -21,7 +23,7 @@ QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1, int arg2){
    this->result.var = result;
    this->op = op;
    this->arg1.var = arg1;
-   this->arg2.literal = arg2;
+   this->arg2.target = arg2;
    this->quad_item_type = 2;
 }
 
@@ -29,7 +31,7 @@ QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1, int arg2){
 QuadItem:: QuadItem(Symbol* result, OpType op, int arg1, Symbol* arg2){
    this->result.var = result;
    this->op = op;
-   this->arg1.literal = arg1;
+   this->arg1.target = arg1;
    this->arg2.var = arg2;
    this->quad_item_type = 2;
 }
@@ -61,25 +63,6 @@ void QuadItem:: printItemInfor(){
             <<" ADD "
             <<this->arg2.var->getIDName()
             <<std::endl;
-        }else if(type == 1){
-            std::cout<<this->result.var->getIDName()
-            <<" := "
-            <<this->arg1.literal
-            <<" ADD "
-            <<this->arg2.literal<<std::endl;
-        }
-        else if(type == 2){
-            std::cout<<this->result.var->getIDName()
-            <<" := ";
-            if(this->arg1.var == NULL){
-                std::cout<<this->arg1.literal
-                <<" ADD "
-                <<this->arg2.var->getIDName()<<std::endl;
-            }else {
-                std::cout<<this->arg1.var->getIDName()
-                <<" ADD "
-                <<this->arg2.literal<<std::endl;
-            }  
         }
         break;
     case substract:
@@ -90,26 +73,8 @@ void QuadItem:: printItemInfor(){
             <<" SUB "
             <<this->arg2.var->getIDName()
             <<std::endl;
-        }else if(type == 1){
-            std::cout<<this->result.var->getIDName()
-            <<" := "
-            <<this->arg1.literal
-            <<" SUB "
-            <<this->arg2.literal<<std::endl;
         }
-        else if(type == 2){
-            std::cout<<this->result.var->getIDName()
-            <<" := ";
-            if(this->arg1.var == NULL){
-                std::cout<<this->arg1.literal
-                <<" SUB "
-                <<this->arg2.var->getIDName()<<std::endl;
-            }else {
-                std::cout<<this->arg1.var->getIDName()
-                <<" SUB "
-                <<this->arg2.literal<<std::endl;
-            }  
-        }
+        // }
         break;
     case multiply:
         if(type == 3){
@@ -119,25 +84,6 @@ void QuadItem:: printItemInfor(){
             <<" MUL "
             <<this->arg2.var->getIDName()
             <<std::endl;
-        }else if(type == 1){
-            std::cout<<this->result.var->getIDName()
-            <<" := "
-            <<this->arg1.literal
-            <<" MUL "
-            <<this->arg2.literal<<std::endl;
-        }
-        else if(type == 2){
-            std::cout<<this->result.var->getIDName()
-            <<" := ";
-            if(this->arg1.var == NULL){
-                std::cout<<this->arg1.literal
-                <<" MUL "
-                <<this->arg2.var->getIDName()<<std::endl;
-            }else {
-                std::cout<<this->arg1.var->getIDName()
-                <<" MUL "
-                <<this->arg2.literal<<std::endl;
-            }  
         }
         break;
     case divide:
@@ -148,25 +94,6 @@ void QuadItem:: printItemInfor(){
             <<" DIV "
             <<this->arg2.var->getIDName()
             <<std::endl;
-        }else if(type == 1){
-            std::cout<<this->result.var->getIDName()
-            <<" := "
-            <<this->arg1.literal
-            <<" DIV "
-            <<this->arg2.literal<<std::endl;
-        }
-        else if(type == 2){
-            std::cout<<this->result.var->getIDName()
-            <<" := ";
-            if(this->arg1.var == NULL){
-                std::cout<<this->arg1.literal
-                <<" DIV "
-                <<this->arg2.var->getIDName()<<std::endl;
-            }else {
-                std::cout<<this->arg1.var->getIDName()
-                <<" DIV "
-                <<this->arg2.literal<<std::endl;
-            }  
         }
         break;
     
@@ -185,7 +112,8 @@ InterCode:: InterCode(AbstractAstNode* root){
 }
 
 void InterCode:: Root_Generate(){
-    this->Generate(this->root);
+    std::cout<<"Gen "<<root->content<<std::endl;
+    Generate(this->root);
     int len = this->quad_list.size();
     int i=0;
     while(i < len){
@@ -194,63 +122,76 @@ void InterCode:: Root_Generate(){
     }
 }
 
-Arg InterCode:: Generate(AbstractAstNode* root){
-    if(root == NULL){
+Symbol* InterCode:: Generate(AbstractAstNode* node){
+    if(node == NULL){
         std::cout<<"Empty Pointer!"<<std::endl;
         exit(1);
     }
-    AbstractAstNode* node = root->getFirstChild();
-    std::string node_content = node->getContent();
-    switch(node->nodeType){
-        case AstNodeType::EXPRESSION: // EXPRESSION
+    std::string node_content = node->content;
+    int type = static_cast<int>(node->nodeType);
+    switch(type){
+        case static_cast<int>(AstNodeType::DEFINITION):{
+            if(node_content == "Single_ID"){
+                Symbol* re = new Symbol(node->getFirstChild()->content);
+                return re;
+            }
+        }
+            break;
+        case static_cast<int>(AstNodeType::OPERATION):{
+            // 注意，先generate完子节点， 再生成result的tempVar；
+            Symbol* arg1 = Generate(node->getFirstChild());
+            Symbol* arg2 = Generate(node->getFirstChild()->getNextSibling());
+            Symbol* re = new Symbol("t"+std::to_string(quad_list.size()));
+            OpType op;
+            if (node_content == "Addition"){
+                op = addtion;
+            }else if (node_content == "Substraction"){
+                op = substract;
+            }else if (node_content == "Multiply"){
+                op = multiply;
+            }else if (node_content == "Divide"){
+                op = divide;
+            }else if(node_content == "()"){
+                node->getFirstChild()->printNodeInfo();
+                Symbol* re = Generate(node->getFirstChild());
+                return re;
+            }
+            QuadItem* quad;
+            if (arg1 != NULL && arg2 != NULL){
+                quad = new QuadItem(re, op, arg1, arg2);
+            }
+            this->quad_list.push_back(quad);
+            // std::cout<<"quad_list Size: "<<quad_list.size()<<std::endl;
+            return re;
+        }
+            break;
+        case static_cast<int>(AstNodeType::ID):{
+            std::cout<<"Dealt by Father_node"<<std::endl;
+        }
+            break;
+        case static_cast<int>(AstNodeType::EXPRESSION): // EXPRESSION
+        {
             if(node_content == "Const_Exp"){
-                Symbol* sym = new Symbol(node->getFirstChild()->content);
-                // temp_list.push_back(sym);
-                Arg arg;
-                arg.literal = std::stoi(node->getFirstChild()->content);
-                return arg;
+                Symbol* re = new Symbol(node->getFirstChild()->content);
+                return re;
             }else if(node_content == "ID_Exp"){
-                Generate(node->getFirstChild());
-            }else if(node_content == "Single_ID"){
-                Symbol* sym = new Symbol(node->getFirstChild()->content);
-                Arg arg; 
-                arg.var = sym;
-                // temp_list.push_back(new Symbol(node->getFirstChild()->getContent()));
-                return arg;
-            }else if(node_content == "Addition"){
-                Symbol* re = new Symbol("t"+quad_list.size());
-                OpType op = addtion;
-                Arg arg1 = Generate(node->getFirstChild());
-                Arg arg2 = Generate(node->getFirstChild()->getNextSibling());
-                QuadItem* quad;
-                if(arg1.var == NULL && arg2.var == NULL){
-                    quad = new QuadItem(re, op, arg1.literal, arg2.literal);
-                }else if (arg1.var == NULL && arg2.var != NULL){
-                    quad = new QuadItem(re, op, arg1.literal, arg2.var);
-                }else if (arg1.var != NULL && arg2.var == NULL){
-                    quad = new QuadItem(re, op, arg1.var, arg2.literal);
-                }else if (arg1.var != NULL && arg2.var != NULL){
-                    quad = new QuadItem(re, op, arg1.literal, arg2.literal);
+                Symbol* re = Generate(node->getFirstChild());
+                return re;
+            }
+        }
+            break;
+        case static_cast<int>(AstNodeType::ROOT):
+            {
+                AbstractAstNode* child = node->getFirstChild();
+                child->printNodeInfo();
+                while(child != NULL){
+                    std::cout<<"Gen "<<child->content<<std::endl;
+                    Generate(child);
+                    child = child->getNextSibling();
                 }
-                this->quad_list.push_back(quad);
-            }else if(node_content == "Divide"){
-                Symbol* re = new Symbol("t"+quad_list.size());
-                OpType op = divide;
-                Arg arg1 = Generate(node->getFirstChild());
-                Arg arg2 = Generate(node->getFirstChild()->getNextSibling());
-                QuadItem* quad;
-                if(arg1.var == NULL && arg2.var == NULL){
-                    quad = new QuadItem(re, op, arg1.literal, arg2.literal);
-                }else if (arg1.var == NULL && arg2.var != NULL){
-                    quad = new QuadItem(re, op, arg1.literal, arg2.var);
-                }else if (arg1.var != NULL && arg2.var == NULL){
-                    quad = new QuadItem(re, op, arg1.var, arg2.literal);
-                }else if (arg1.var != NULL && arg2.var != NULL){
-                    quad = new QuadItem(re, op, arg1.literal, arg2.literal);
-                }
-                this->quad_list.push_back(quad);
             }
             break;
+
         default:
             std::cout<<"No such AstNodeType!"<<std::endl; 
         exit(1);

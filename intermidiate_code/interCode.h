@@ -18,7 +18,7 @@ enum  OpType{
     label,
 };
 union Arg{
-   int literal;
+   int target;
    Symbol* var;
 };
 
@@ -50,7 +50,7 @@ public:
     InterCode();
     // 从ast生成中间代码；
     InterCode(AbstractAstNode* root);
-    Arg Generate(AbstractAstNode* node);
+    Symbol* Generate(AbstractAstNode* node);
     void Root_Generate();
     void addItem(QuadItem* item);
     void showList();

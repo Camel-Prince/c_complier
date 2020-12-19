@@ -13,6 +13,7 @@ enum  OpType{
     divide,
     mod,
     power,
+    assign,
     logic_and,
     logic_or,
     logic_not,
@@ -26,13 +27,12 @@ union Arg{
 
 
 class QuadItem {
-private:
+public: 
     Arg result;
     OpType op;
     Arg arg1;
     Arg arg2;
     int quad_item_type;
-public: 
     QuadItem(Symbol* result, OpType op, int arg1, int arg2);
     QuadItem(Symbol* result, OpType op, Symbol* arg1, int arg2);
     QuadItem(Symbol* result, OpType op, int arg1, Symbol* arg2);

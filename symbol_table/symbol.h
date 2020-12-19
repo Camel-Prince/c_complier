@@ -29,6 +29,13 @@ public:
     inline SymbolType &getSymbolType(){return this->idType;}
     inline int getWidth(){return this->width;}
     inline void setWidth(int width){this->width = width;}
+    inline void showSymbolInfor(){
+        std::cout<<"Symbol Name: "<<this->idName
+                 <<"\tSymbol Addr: "<<this
+                 <<"\tSymbol vale: "<<this->value
+                 <<"\twitdth: "<<this->width
+                 <<"\tSymbol Type: "<<static_cast<int>(this->idType)<<std::endl;
+    }
 };
 
 

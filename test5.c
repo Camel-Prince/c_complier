@@ -1,6 +1,10 @@
-int main()
-{  int a = 1;
-   int b = 2;
-//    int c = 3;
-    a + b + c;
+// #include <stdio.h>
+// #include <stdlib.h> 
+int main(){
+    int a;
+    int b;
+    b = a;
+    // printf("a = %d\n",a);
+    // printf("b = %d\n",b);
+
 }

@@ -45,6 +45,19 @@ QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1, Symbol* arg2){
    this->quad_item_type = 3;
 }
 
+/***
+ * 
+ * 以下quad_item_type为4的为：
+ * result为变量；
+ * op为单目运算符；
+ * ***/
+QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1){
+    this->result.var = result;
+    this->op = op;
+    this->arg1.var = arg1;
+    this->quad_item_type = 4;
+}
+
 /**
  * 
  * 打印出一个四元式；根据op、arg1/2以及result的类型类确定输出格式；
@@ -116,6 +129,12 @@ void QuadItem:: printItemInfor(){
             <<std::endl;
         }
         break;
+    case assign:
+        std::cout<<this->result.var->getIDName()
+        <<" := "
+        <<this->arg1.var->getIDName()
+        <<std::endl;
+    break;
     
     default:
         break;
@@ -138,7 +157,11 @@ void InterCode:: Root_Generate(){
     int i=0;
     while(i < len){
         quad_list[i]->printItemInfor();
-         i++;
+        Symbol* arg1 = quad_list[i]->arg1.var;
+        Symbol* arg2 = quad_list[i]->arg2.var;
+        if(arg1 != NULL)quad_list[i]->arg1.var->showSymbolInfor();
+        if(arg2 != NULL)quad_list[i]->arg2.var->showSymbolInfor();
+        i++;
     }
 }
 
@@ -292,32 +315,55 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 // node->getFirstChild()->printNodeInfo();
                 Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
                 return re;
+            }else if(node_content == "Addition" ||
+                node_content == "Substraction" ||
+                node_content == "Multiply" || 
+                node_content == "Divide" || 
+                node_content == "Mod" || 
+                node_content == "Power"){
+                        // 注意，先generate完子节点， 再生成result的tempVar；
+                Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
+                Symbol* arg2 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table); 
+                Symbol* re = new Symbol("t"+std::to_string(quad_list.size()), SymbolType::temp_var, 4);
+                OpType op;
+                if (node_content == "Addition"){
+                    op = addtion;
+                }else if (node_content == "Substraction"){
+                    op = substract;
+                }else if (node_content == "Multiply"){
+                    op = multiply;
+                }else if (node_content == "Divide"){
+                    op = divide;
+                }else if (node_content == "Mod"){
+                    op = mod;
+                }else if (node_content == "Power"){
+                    op = power;
+                }
+                QuadItem* quad;
+                if (arg1 != NULL && arg2 != NULL){
+                    quad = new QuadItem(re, op, arg1, arg2);
+                }else {
+                    std::cout<<"Error!"<<std::endl;
+                    exit(1);
+                }
+                this->quad_list.push_back(quad);
+                // std::cout<<"quad_list Size: "<<quad_list.size()<<std::endl;
+                return re;
+            } else if(node_content == "Assign"){
+                OpType op = assign;
+                Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
+                Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table);
+                QuadItem* quad;
+                if( re != NULL && arg1 != NULL){
+                    quad = new QuadItem(re, op, arg1);
+                }else {
+                    std::cout<<"Error!"<<std::endl;
+                    exit(1);
+                }
+                this->quad_list.push_back(quad);
+                // std::cout<<"quad_list Size: "<<quad_list.size()<<std::endl;
+                return re;
             }
-            // 注意，先generate完子节点， 再生成result的tempVar；
-            Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
-            Symbol* arg2 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table);
-            Symbol* re = new Symbol("t"+std::to_string(quad_list.size()), SymbolType::temp_var, 4);
-            OpType op;
-            if (node_content == "Addition"){
-                op = addtion;
-            }else if (node_content == "Substraction"){
-                op = substract;
-            }else if (node_content == "Multiply"){
-                op = multiply;
-            }else if (node_content == "Divide"){
-                op = divide;
-            }else if (node_content == "Mod"){
-                op = mod;
-            }else if (node_content == "Power"){
-                op = power;
-            }
-            QuadItem* quad;
-            if (arg1 != NULL && arg2 != NULL){
-                quad = new QuadItem(re, op, arg1, arg2);
-            }
-            this->quad_list.push_back(quad);
-            // std::cout<<"quad_list Size: "<<quad_list.size()<<std::endl;
-            return re;
         }
             break;
         case static_cast<int>(AstNodeType::ID):{
@@ -406,7 +452,12 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                     Symbol* var = new Symbol(var_name, SymbolType:: var, 4, const_value);
                     symbol_table->addSymbol(var);
                     std::cout<<"Add Symbol "<<var_name<<" into SymbolTable!"<<std::endl;
-                }else {
+                }else if(child->content == "Var_ONLY"){
+                    std::string var_name;
+                    var_name = child->getFirstChild()->getFirstChild()->content;
+                    Symbol* var = new Symbol(var_name, SymbolType:: var, 4);
+                    symbol_table->addSymbol(var);
+                    std::cout<<"Add Symbol "<<var_name<<" into SymbolTable!"<<std::endl;
                     // TBD
                 }
             }

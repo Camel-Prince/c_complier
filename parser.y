@@ -82,12 +82,6 @@ Program:
         root->addFirstChild($1);
         printAst(root);
     }
-    | Exp {
-        root = new AbstractAstNode(AstNodeType::ROOT,"Program");
-        root->addFirstChild($1);
-        printAst(root);
-        // just for test; shoud be deleted if completed!
-    }
   ;
 //with one or more block
 BlockList:
@@ -656,7 +650,7 @@ Exp:
         $$ = node;
     }
   | '(' Exp ')'{
-        AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "()");
+        AbstractAstNode* node = new AbstractAstNode(AstNodeType::OPERATION, "Parentheses");
         node->addFirstChild($2);
         $$ = node;
     }

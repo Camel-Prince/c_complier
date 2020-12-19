@@ -11,6 +11,8 @@ enum  OpType{
     substract,
     multiply,
     divide,
+    mod,
+    power,
     logic_and,
     logic_or,
     logic_not,
@@ -50,7 +52,9 @@ public:
     InterCode();
     // 从ast生成中间代码；
     InterCode(AbstractAstNode* root);
-    Symbol* Generate(AbstractAstNode* node);
+    Symbol* Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol_table);
+    SymbolTable* Body_Generate(AbstractAstNode* node, SymbolTable* symbol_table);
+    void Generate(AbstractAstNode* node);
     void Root_Generate();
     void addItem(QuadItem* item);
     void showList();

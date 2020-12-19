@@ -44,6 +44,7 @@ public:
     inline AbstractAstNode* getLastSiblingNode(); 
     inline std::string getContent();
     inline AstNodeType getAstNodeType();
+    inline std::string getNodeTypeName();
     inline int getDepth();
     inline void setDepth(int newDepth);
     bool isVisited = false;

@@ -3,14 +3,19 @@
 #include "../abstract_syntax_tree/AstNode.h"
 
 Symbol::Symbol(){
-    idName = "";
-    idType = SymbolType::integer;
+    this->idName = "";
+    this->idType = SymbolType::integer;
+    this->width = 4;
+    this->value= "0";
 }
 
-Symbol::Symbol(std::string name, SymbolType type){
+Symbol::Symbol(std::string name, SymbolType type, int width, std::string init_value){
     this->idName = name;
     this->idType = type;
+    this->width = width;
+    this->value = init_value;
 }
+
 
 SymbolTable:: SymbolTable(bool isFunc){
     this->isFunctionTable = isFunc;
@@ -18,6 +23,7 @@ SymbolTable:: SymbolTable(bool isFunc){
     this->nextSiblingTable = NULL;
     this->parentTable = NULL;
     this->baseTable = NULL;
+    this->offset = 0;
     if(isFunc){
         symbolArray = new std::vector<Symbol* >();
         argArray = new std::vector<Symbol*>();
@@ -28,6 +34,7 @@ SymbolTable:: SymbolTable(bool isFunc, SymbolTable* parent){
     this->firstChildTable = NULL;
     this->nextSiblingTable = NULL;
     this->parentTable = parent;
+    this->offset = 0;
     SymbolTable* temp = this;
     while(!temp->isFunctionTable){
         temp = temp->parentTable;

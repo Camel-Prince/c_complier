@@ -50,6 +50,61 @@ AstNodeType AbstractAstNode:: getAstNodeType(){
     return this->nodeType;
 }
 
+std::string AbstractAstNode:: getNodeTypeName(){
+    std::string typeName;
+    switch (static_cast<int>(this->nodeType))
+    {
+    case 0:
+        typeName = "ROOT";
+        break;
+    case 1:
+        typeName = "ID";
+        break;
+    case 2:
+        typeName = "EXPRESSION";
+        break;
+    case 3:
+        typeName = "CONST_INT";
+        break;
+    case 4:
+        typeName = "OPERATION";
+        break;
+    case 5:
+        typeName = "STATEMENT";
+        break;
+    case 6:
+        typeName = "LOOP";
+        break;
+    case 7:
+        typeName = "SELECT";
+        break;
+    case 8:
+        typeName = "DEFINITION";
+        break;
+    case 9:
+        typeName = "MODIFY";
+        break;
+    case 10:
+        typeName = "CALL";
+        break;
+    case 11:
+        typeName = "POINTER";
+        break;
+    case 12:
+        typeName = "ARRAY";
+        break;
+    case 13:
+        typeName = "ADDRESS";
+        break;
+    case 14:
+        typeName = "BODY";
+        break;
+    default:
+        break;
+    }
+    return typeName;
+}
+
 void AbstractAstNode:: setDepth(int newDepth){
     this->depth = newDepth;
 }
@@ -79,6 +134,7 @@ void AbstractAstNode:: addNextSibling(AbstractAstNode* node) {
 }
 
 void AbstractAstNode:: printNodeInfo() {
+    std::string typeName = this->getNodeTypeName();
     int depth = this->depth;
     char* prefix = new char[depth*4];
     for(int i=0; i<depth*4; i++){
@@ -98,7 +154,8 @@ void AbstractAstNode:: printNodeInfo() {
         }
     }
     std::cout<<prefix<<"|____"
-            <<"Content: "<<this->content
+            <<" Type: "<<typeName
+            <<" Content: "<<this->content
             <<" Depth: "<<this->depth
             <<std::endl;
 }
@@ -138,8 +195,8 @@ void printAst(AbstractAstNode* Root){
 
 }
 
-AbstractAstNode* getIDNameFromSingleDefStmt(AbstractAstNode* def_stmt){
-    AbstractAstNode* re = def_stmt;
-    re = re->getFirstChild()->getFirstChild()->getNextSibling()->getFirstChild()->getFirstChild()->getFirstChild();
-    return re;
-}
+// AbstractAstNode* getIDNameFromSingleDefStmt(AbstractAstNode* def_stmt){
+//     AbstractAstNode* re = def_stmt;
+//     re = re->getFirstChild()->getFirstChild()->getNextSibling()->getFirstChild()->getFirstChild()->getFirstChild();
+//     return re;
+// }

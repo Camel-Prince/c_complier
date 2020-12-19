@@ -7,22 +7,28 @@
 # include "../abstract_syntax_tree/AstNode.h"
 enum class SymbolType {
     integer = 1,
-    function,
+    var,
+    temp_var,
     pointer,
+    array,
     boolean,
     Void,
-    array
+    function_name,
 };
 
 class Symbol {
 private:
     std::string idName;
     SymbolType idType;
+    int width;
+    std::string value;
 public:
     Symbol();
-    Symbol(std::string name, SymbolType type = SymbolType::integer);
-    inline std::string getIDName(){return this->idName;};
-    inline SymbolType &getSymbolType(){return this->idType;};
+    Symbol(std::string name, SymbolType type = SymbolType::var, int width = 4, std::string init_value = "0");
+    inline std::string getIDName(){return this->idName;}
+    inline SymbolType &getSymbolType(){return this->idType;}
+    inline int getWidth(){return this->width;}
+    inline void setWidth(int width){this->width = width;}
 };
 
 
@@ -39,6 +45,7 @@ public:
     SymbolTable* firstChildTable;
     SymbolTable* nextSiblingTable;
     bool isFunctionTable;
+    int offset;
     int symbolNumber; // symbol numbers in baseTable;
     //the function table this table is embedded in 
     SymbolTable* baseTable;
@@ -54,6 +61,8 @@ public:
     inline SymbolTable* getNextSiblingTable(){return this->nextSiblingTable;}
     inline int getSymbolNumber(){return this->symbolNumber;}
     inline void setParentTable(SymbolTable* parentTable){this->parentTable = parentTable;}
+    inline int getOffset(){return this->offset;}
+    inline int setOffset(int increament){this->offset += increament; }
     SymbolTable* addChildTable(bool isFunc);
     void addNextSiblingTable(SymbolTable* ns);
     Symbol* findSymbolGlobally(const std::string name);

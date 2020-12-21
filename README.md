@@ -3,9 +3,10 @@
 ## 运行方式
 1. 进入项目目录在终端输入`make`指令
 2. 在linux系统下，`make`之后会得到可执行文件scanner_parser_test  
-在mac下则会出现问题，此时需要在`parser.tab.h`文件的前两行输入一下代码：  
-`#include "abstract_syntax_tree/AstNode.h`  
-`#include "symbol_table/symbol.h`  
+在mac下则会出现问题，此时需要在`parser.tab.h`文件的前两行输入以下代码:  
+`#include "abstract_syntax_tree/AstNode.h"`  
+`#include "symbol_table/symbol.h"`  
+`#include "intermidiate_code/interCode.h"`
 保存后在终端输入命令：`g++ -o scanner_parser_test AstNode.o symbol.o parser.tab.c scanner.lex.c`  
 3. 执行`scanner_parser_test`，若没有参数则会读取标准终端输入；  
 或者提供文件路径来读取文件的内容，对文件进行词法、语法分析；

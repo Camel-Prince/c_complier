@@ -157,10 +157,10 @@ void InterCode:: Root_Generate(){
     int i=0;
     while(i < len){
         quad_list[i]->printItemInfor();
-        Symbol* arg1 = quad_list[i]->arg1.var;
-        Symbol* arg2 = quad_list[i]->arg2.var;
-        if(arg1 != NULL)quad_list[i]->arg1.var->showSymbolInfor();
-        if(arg2 != NULL)quad_list[i]->arg2.var->showSymbolInfor();
+        // Symbol* arg1 = quad_list[i]->arg1.var;
+        // Symbol* arg2 = quad_list[i]->arg2.var;
+        // if(arg1 != NULL)quad_list[i]->arg1.var->showSymbolInfor();
+        // if(arg2 != NULL)quad_list[i]->arg2.var->showSymbolInfor();
         i++;
     }
 }
@@ -267,19 +267,7 @@ void InterCode:: Generate(AbstractAstNode* node) {
                         // 进入了main 函数的body：
                         SymbolTable* symbol_table = new SymbolTable(false);
                         Body_Generate(node, symbol_table);
-                        // Symbol* a = symbol_table->findSymbolLocally("a");
-                        // Symbol* b = symbol_table->findSymbolLocally("b");
-                        // if(a != NULL && b != NULL){
-                        //     std::cout<<"Add a,b into main Body!"<<std::endl;
-                        // }
                     }
-                    // AbstractAstNode* child = node->getFirstChild();
-                    // // child->printNodeInfo();
-                    // while(child != NULL){
-                    //     std::cout<<"Gen "<<child->content<<std::endl;
-                    //     Generate(child);
-                    //     child = child->getNextSibling();
-                    // }
                 }
         break;
         default:
@@ -400,7 +388,7 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
         case static_cast<int>(AstNodeType:: BODY):{
             AbstractAstNode* child = node->getFirstChild();
                     // child->printNodeInfo();
-                    int i=0;
+                    
                     while(child != NULL){
                         std::cout<<"Body_Gen "<<child->content<<std::endl;
                         Body_Generate(child, symbol_table);
@@ -449,12 +437,20 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                     std::string const_value;
                     var_name = child->getFirstChild()->getFirstChild()->content;
                     const_value = child->getFirstChild()->getNextSibling()->getFirstChild()->content;
+                    if(symbol_table->findSymbolLocally(var_name)){
+                        std::cout<<"Error! Dupilcate Defined ID: "<<var_name<<std::endl;
+                        exit(1);
+                    }
                     Symbol* var = new Symbol(var_name, SymbolType:: var, 4, const_value);
                     symbol_table->addSymbol(var);
                     std::cout<<"Add Symbol "<<var_name<<" into SymbolTable!"<<std::endl;
                 }else if(child->content == "Var_ONLY"){
                     std::string var_name;
                     var_name = child->getFirstChild()->getFirstChild()->content;
+                    if(symbol_table->findSymbolLocally(var_name)){
+                        std::cout<<"Error! Dupilcate Defined ID: "<<var_name<<std::endl;
+                        exit(1);
+                    }
                     Symbol* var = new Symbol(var_name, SymbolType:: var, 4);
                     symbol_table->addSymbol(var);
                     std::cout<<"Add Symbol "<<var_name<<" into SymbolTable!"<<std::endl;

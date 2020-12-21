@@ -70,9 +70,6 @@ std::stack<SymbolTable*> SymbolTableList;
 %type <ast> Consts
 %type <ast> IDList
 
-%type <str> EnterScope
-%type <str> LeaveScope
-
 %%
 //start of program
 Program:
@@ -139,19 +136,19 @@ Vardef:
         node->addFirstChild(var_node);
         $$ = node;
 
-        SymbolTable* this_scope = SymbolTableList.top();
-        printf("Get the ID's Scope\n");
-        printf("*********\n");
-        Symbol* syn = new Symbol($1);
-        bool result = this_scope->addSymbol(syn);
-        if(result == true){
-          printf("add ID success!\n");
-        }
-        else {
-          printf("Duplicate define!\n");
-          exit(1);
-        }
-        printf("result: %d\n", result);
+        // SymbolTable* this_scope = SymbolTableList.top();
+        // printf("Get the ID's Scope\n");
+        // printf("*********\n");
+        // Symbol* syn = new Symbol($1);
+        // bool result = this_scope->addSymbol(syn);
+        // if(result == true){
+        //   printf("add ID success!\n");
+        // }
+        // else {
+        //   printf("Duplicate define!\n");
+        //   exit(1);
+        // }
+        // printf("result: %d\n", result);
     }
   //array,like a[10]
   | IDENTIFIER '[' CONST ']'{//id[10]
@@ -185,15 +182,15 @@ Vardef:
         node->addFirstChild(var_node);
         $$ = node;
 
-        SymbolTable* this_scope = SymbolTableList.top();
-        Symbol* s = new Symbol($2, SymbolType::pointer);
-        bool result = this_scope->addSymbol(s);
-        if(result == false){
-          printf("Duplicate definition");
-          exit(1);
-        }else{
-          printf("Add A Pointer\n");
-        }
+        // SymbolTable* this_scope = SymbolTableList.top();
+        // Symbol* s = new Symbol($2, SymbolType::pointer);
+        // bool result = this_scope->addSymbol(s);
+        // if(result == false){
+        //   printf("Duplicate definition");
+        //   exit(1);
+        // }else{
+        //   printf("Add A Pointer\n");
+        // }
   }
   ;
   Consts:
@@ -331,10 +328,10 @@ Param:
   ;
 //func body {s}
 Body:
-    '{' EnterScope StmtList LeaveScope'}'{
+    '{' StmtList '}'{
       printf("body->{stmtlist} \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::BODY,"Body");
-        node->addFirstChild($3);
+        node->addFirstChild($2);
         $$ = node;
     }
     ;
@@ -789,21 +786,6 @@ IDList:
     }
   ;
 
-  EnterScope: {
-    printf("Enter {}\n");
-    SymbolTable* scope = new SymbolTable(false);
-    SymbolTableList.push(scope);
-    printf("Scope created! ");
-    printf(" Size now:%d\n",SymbolTableList.size());
-  }
-  ;
-  LeaveScope: {
-    printf("Scope pop\n");
-    SymbolTableList.pop();
-    printf("Leave {}\n");
-    printf(" Size now:%d\n",SymbolTableList.size());
-  }
-  ;
 %%
 int  main(int argc, char** argv)
 {

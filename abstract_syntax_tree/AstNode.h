@@ -10,8 +10,6 @@ enum class AstNodeType
     CONST_INT,
     OPERATION,
     STATEMENT,
-    LOOP,
-    SELECT,
     DEFINITION,
     MODIFY,
     CALL, 

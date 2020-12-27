@@ -73,30 +73,24 @@ std::string AbstractAstNode:: getNodeTypeName(){
         typeName = "STATEMENT";
         break;
     case 6:
-        typeName = "LOOP";
-        break;
-    case 7:
-        typeName = "SELECT";
-        break;
-    case 8:
         typeName = "DEFINITION";
         break;
-    case 9:
+    case 7:
         typeName = "MODIFY";
         break;
-    case 10:
+    case 8:
         typeName = "CALL";
         break;
-    case 11:
+    case 9:
         typeName = "POINTER";
         break;
-    case 12:
+    case 10:
         typeName = "ARRAY";
         break;
-    case 13:
+    case 11:
         typeName = "ADDRESS";
         break;
-    case 14:
+    case 12:
         typeName = "BODY";
         break;
     default:
@@ -154,7 +148,7 @@ void AbstractAstNode:: printNodeInfo() {
         }
     }
     std::cout<<prefix<<"|____"
-            <<" Type: "<<typeName
+            <<" Type: "<< typeName
             <<" Content: "<<this->content
             <<" Depth: "<<this->depth
             <<std::endl;

@@ -27,6 +27,8 @@ enum  OpType{
     JUMP_GE,
     JUMP_EQ,
     JUMP_NE,
+    RETURN_OP,
+
 };
 union Arg{
    int target;
@@ -42,13 +44,30 @@ public:
     Arg arg2;
     int quad_item_type;
     QuadItem(int result,OpType op);
-    QuadItem(int result,OpType op, Symbol* arg1, Symbol* arg2);
+    QuadItem(Symbol* result, OpType op, int arg1, int arg2);
+    QuadItem(Symbol* result, OpType op, Symbol* arg1, int arg2);
+    QuadItem(Symbol* result, OpType op, int arg1, Symbol* arg2);
     QuadItem(Symbol* result, OpType op, Symbol* arg1, Symbol* arg2);
+    QuadItem(Symbol* result, OpType op, int arg1);
     QuadItem(Symbol* result, OpType op, Symbol* arg1);
-    void printItemInfor(int i,int j,int len);
+    QuadItem(int result,OpType op, Symbol* arg1, Symbol* arg2);    
+    QuadItem(int result, OpType op, int arg1);
+    void printItemInfor(int i);
     
     //functions for backpatch
     inline void backpatch(int target) { this->result.target = target; };
+
+    inline OpType getOpType() { return this->op; }
+    inline int getItemType() { return this->quad_item_type; }
+    inline Arg getArg(int index)
+    {
+        if (index == 1)
+            return this->arg1;
+        else if (index == 2)
+            return this->arg2;
+        else if (index == 3)
+            return this->result;
+    }
 
 };
 
@@ -58,7 +77,7 @@ private:
     std::vector<QuadItem* > quad_list;
     SymbolTable* rootTable;
     std::vector<Symbol* >temp_list;
-
+    std::stack<int>logic;
     std::stack<std::list<int> > trueList;
     std::stack<std::list<int> > falseList;
 
@@ -77,6 +96,8 @@ public:
     std::list<int> *makelist(int index);
     std::list<int> *merge(std::list<int> *list1, std::list<int> *list2);
     void backpatch(std::list<int> *backList, int target);
+    std::vector<QuadItem* > getQuadlist(){return quad_list;}
+    SymbolTable* getTable(){return rootTable;}
 
 };
 

@@ -4,16 +4,31 @@
 #include <string>
 #include<list>
 
-/***
- * 
- * 以下quad_item_type为1-3的为：
- * result为变量；
- * op为双目运算符；
- * ***/
-// 常量运算后赋值给变量；
-//content:
-//1. 3backpatch
-//2. zlywhile
+QuadItem:: QuadItem(Symbol* result, OpType op, int arg1, int arg2){
+   this->result.var = result;
+   this->op = op;
+   this->arg1.target = arg1;
+   this->arg2.target = arg2;
+   this->quad_item_type = 4;
+}
+
+// 常量和变量运算后赋值给变量-1；
+QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1, int arg2){
+   this->result.var = result;
+   this->op = op;
+   this->arg1.var = arg1;
+   this->arg2.target = arg2;
+   this->quad_item_type = 5;
+}
+
+// 常量和变量运算后赋值给变量-2；
+QuadItem:: QuadItem(Symbol* result, OpType op, int arg1, Symbol* arg2){
+   this->result.var = result;
+   this->op = op;
+   this->arg1.target = arg1;
+   this->arg2.var = arg2;
+   this->quad_item_type = 6;
+}
 
 // 变量和变量运算后赋值给变量
 QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1, Symbol* arg2){
@@ -22,7 +37,7 @@ QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1, Symbol* arg2){
    this->arg1.var = arg1;
    this->arg2.var = arg2;
    //?3 may not right
-   this->quad_item_type = 3;
+   this->quad_item_type = 7;
 }
 
 /***
@@ -35,7 +50,7 @@ QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1){
     this->result.var = result;
     this->op = op;
     this->arg1.var = arg1;
-    this->quad_item_type = 4;
+    this->quad_item_type = 7;
 }
 QuadItem::QuadItem(int result,OpType op)
 {
@@ -43,7 +58,7 @@ QuadItem::QuadItem(int result,OpType op)
     this->arg1.var = NULL;
     this->arg2.var = NULL;
     this->result.target = result;
-    this->quad_item_type = 5;
+    this->quad_item_type = 3;
 }
 QuadItem::QuadItem(int result,OpType op, Symbol* arg1, Symbol* arg2)
 {
@@ -51,7 +66,7 @@ QuadItem::QuadItem(int result,OpType op, Symbol* arg1, Symbol* arg2)
     this->arg1.var = arg1;
     this->arg2.var = arg2;
     this->result.target = result;
-    this->quad_item_type = 6;
+    this->quad_item_type = 3;
 }
 
 /**
@@ -59,13 +74,13 @@ QuadItem::QuadItem(int result,OpType op, Symbol* arg1, Symbol* arg2)
  * 打印出一个四元式；根据op、arg1/2以及result的类型类确定输出格式；
  * 
 */
-void QuadItem:: printItemInfor(int i,int j,int len){
+void QuadItem:: printItemInfor(int i){
     OpType op_type = this->op;
     int type = this->quad_item_type;
     switch (op)
     {
     case addtion:
-        if(type == 3){
+        if(type == 7){
             std::cout<<"L"
             <<i+1
             <<":  "
@@ -78,7 +93,7 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         }
         break;
     case substract:
-        if(type == 3){
+        if(type == 7){
             std::cout<<"L"
             <<i+1
             <<":  "
@@ -92,7 +107,7 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         // }
         break;
     case multiply:
-        if(type == 3){
+        if(type == 7){
             std::cout<<"L"
             <<i+1
             <<":  "
@@ -105,7 +120,7 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         }
         break;
     case divide:
-        if(type == 3){
+        if(type == 7){
             std::cout<<"L"
             <<i+1
             <<":  "
@@ -118,7 +133,7 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         }
         break;
     case mod:
-        if(type == 3){
+        if(type == 7){
             std::cout<<"L"
             <<i+1
             <<":  "
@@ -131,7 +146,7 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         }
         break;
     case power:
-        if(type == 3){
+        if(type == 7){
             std::cout<<"L"
             <<i+1
             <<":  "
@@ -153,7 +168,7 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         <<std::endl;
     break;
     case JUMP_LT:
-        std::cout<<"if "
+        std::cout<<"L"<<i+1<<":  "<<"if "
         <<this->arg1.var->getIDName()
         <<" < "
         <<this->arg2.var->getIDName()
@@ -161,12 +176,9 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         <<"L"
         <<this->result.target+1
         <<std::endl;
-        std::cout<<"goto "
-        <<"L"<<j
-        <<std::endl;
     break;
     case JUMP_LE:
-        std::cout<<"if "
+        std::cout<<"L"<<i+1<<":  "<<"if "
         <<this->arg1.var->getIDName()
         <<" <= "
         <<this->arg2.var->getIDName()
@@ -174,12 +186,9 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         <<"L"
         <<this->result.target+1
         <<std::endl;
-        std::cout<<"goto "
-        <<"L"<<j
-        <<std::endl;
     break;
     case JUMP_GT:
-        std::cout<<"if "
+        std::cout<<"L"<<i+1<<":  "<<"if "
         <<this->arg1.var->getIDName()
         <<" > "
         <<this->arg2.var->getIDName()
@@ -187,12 +196,9 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         <<"L"
         <<this->result.target+1
         <<std::endl;
-        std::cout<<"goto "
-        <<"L"<<j
-        <<std::endl;
     break;
     case JUMP_GE:
-        std::cout<<"if "
+        std::cout<<"L"<<i+1<<":  "<<"if "
         <<this->arg1.var->getIDName()
         <<" >= "
         <<this->arg2.var->getIDName()
@@ -200,12 +206,9 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         <<"L"
         <<this->result.target+1
         <<std::endl;
-        std::cout<<"goto "
-        <<"L"<<j
-        <<std::endl;
     break;
     case JUMP_EQ:
-        std::cout<<"if "
+        std::cout<<"L"<<i+1<<":  "<<"if "
         <<this->arg1.var->getIDName()
         <<" == "
         <<this->arg2.var->getIDName()
@@ -213,12 +216,9 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         <<"L"
         <<this->result.target+1
         <<std::endl;
-        std::cout<<"goto "
-        <<"L"<<j
-        <<std::endl;
     break;
     case JUMP_NE:
-        std::cout<<"if "
+        std::cout<<"L"<<i+1<<":  "<<"if "
         <<this->arg1.var->getIDName()
         <<" != "
         <<this->arg2.var->getIDName()
@@ -226,48 +226,69 @@ void QuadItem:: printItemInfor(int i,int j,int len){
         <<"L"
         <<this->result.target+1
         <<std::endl;
-        std::cout<<"goto "
-        <<"L"<<j
+    break;
+    case JUMP:
+        std::cout<<"L"<<i+1<<":  "
+        <<" goto "
+        <<"L"
+        <<this->result.target+1
         <<std::endl;
     break;
-
+    // case _and:
+    //     std::cout<<"L"<<i+1<<":  "<<"if "
+    //     <<this->arg1.var->getIDName()
+    //     <<" AND "
+    //     <<this->arg2.var->getIDName()
+    //     <<" goto "
+    //     <<"L"
+    //     <<this->result.target+1
+    //     <<std::endl;
+    //     break;
+    // case _or:
+    //     std::cout<<"L"<<i+1<<":  "<<"if "
+    //     <<this->arg1.var->getIDName()
+    //     <<" OR "
+    //     <<this->arg2.var->getIDName()
+    //     <<" goto "
+    //     <<"L"
+    //     <<this->result.target+1
+    //     <<std::endl;
+    //     break;
+    // //
+    // case _not:
+    //     std::cout<<"L"<<i+1<<":  "<<"if "
+    //     <<this->arg1.var->getIDName()
+    //     <<" NOT "
+    //     <<this->arg2.var->getIDName()
+    //     <<" goto "
+    //     <<"L"
+    //     <<this->result.target+1
+    //     <<std::endl;
+    //    break;
     default:
-        break;
-    }
+    break;
+     }
 }
 
-int InterCode:: getFalseJump(int i){
-    if(i <this->quad_list.size()-1){
-        return this->quad_list[i+1]->result.target+1;
-    }
-    return i+2;
-    
-}
-
-InterCode:: InterCode(){
-
-}
 
 InterCode:: InterCode(AbstractAstNode* root){
     this->root = root;
-    this->rootTable = new SymbolTable(true);
+    this->rootTable = new SymbolTable(false);
 }
 
 void InterCode:: Root_Generate(){
     std::cout<<"Gen "<<root->content<<std::endl;
     Generate(this->root);
     int len = this->quad_list.size();
-    std::cout<<"========="<<quad_list.size()<<"=========="<<std::endl;
     int i=0;
     while(i < len){
-        quad_list[i]->printItemInfor(i,getFalseJump(i),len);
+        quad_list[i]->printItemInfor(i);
         Symbol* arg1 = quad_list[i]->arg1.var;
         Symbol* arg2 = quad_list[i]->arg2.var;
-        // if(arg1 != NULL)quad_list[i]->arg1.var->showSymbolInfor();
-        // if(arg2 != NULL)quad_list[i]->arg2.var->showSymbolInfor();
+        //if(arg1 != NULL)quad_list[i]->arg1.var->showSymbolInfor();
+        //if(arg2 != NULL)quad_list[i]->arg2.var->showSymbolInfor();
         i++;
     }
-    std::cout<<"L"<<len+1<<":  ";
 }
 
 void InterCode:: Generate(AbstractAstNode* node) {
@@ -411,7 +432,7 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 std::string ID_name = node->getFirstChild()->content;
                 Symbol* re = symbol_table->findSymbolLocally(ID_name);
                 if(re == NULL){
-                    // 未定义使用的错误在findSymbolGlobally中定义；
+                    // 未定义使用在findSymbolGlobally中定义；
                     re = symbol_table->findSymbolGlobally(ID_name);
                 }
                 // Symbol* re = new Symbol(node->getFirstChild()->content);
@@ -433,7 +454,8 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                         // 注意，先generate完子节点， 再生成result的tempVar；
                 Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
                 Symbol* arg2 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table); 
-                Symbol* re = new Symbol("t"+std::to_string(quad_list.size()), SymbolType::temp_var, 4);
+                Symbol* re = new Symbol("t"+std::to_string(temp_list.size()), SymbolType::temp_var, 4);
+                temp_list.push_back(re);
                 OpType op;
                 if (node_content == "Addition"){
                     op = addtion;
@@ -460,11 +482,8 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 return re;
             } else if(node_content == "Assign"){
                 OpType op = assign;
-                std::cout<<"=========assign=========="<<std::endl;
                 Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
-                std::cout<<"========="<<re->getIDName()<<"=========="<<std::endl;
                 Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table);
-                std::cout<<"========="<<arg1->getIDName()<<"=========="<<std::endl;
                 QuadItem* quad;
                 if( re != NULL && arg1 != NULL){
                     quad = new QuadItem(re, op, arg1);
@@ -482,9 +501,7 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 node_content == "GE_OP" ||
                 node_content == "LE_OP" ){
                 Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
-                std::cout<<"========="<<arg1->getIDName()<<"=========="<<std::endl; 
                 Symbol* arg2 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table); 
-                std::cout<<"========="<<arg2->getIDName()<<"=========="<<std::endl; 
                 OpType op;
                 if (node_content == "EQ_OP"){
                     op = JUMP_EQ;
@@ -501,19 +518,14 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 }
                 if (arg1 != NULL && arg2 != NULL){
                     QuadItem *T = new QuadItem(int(NULL),op,arg1,arg2);
-                    // std::cout<<"*****************"<<std::endl;
-                    //T->printItemInfor();
                     QuadItem *F = new QuadItem(int(NULL),OpType::JUMP);
-                    // std::cout<<"*****************"<<std::endl;
                     std::list<int> trueL; 
                     int len = quad_list.size();
-                    // std::cout<<"========="<<len<<"=========="<<std::endl; 
                     trueL.push_back(len);
                     this->quad_list.push_back(T);
                     std::list<int> falseL; 
                     len = quad_list.size();
                     falseL.push_back(len);
-                    // std::cout<<"========="<<len<<"=========="<<std::endl; 
                     this->quad_list.push_back(F);
                     trueList.push(trueL);
                     falseList.push(falseL);
@@ -522,7 +534,65 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                     exit(1);
                 }
 
+            }else if(node_content == "AND" || node_content == "OR" || node_content == "NOT"){
+                if (node_content == "AND"){
+                    AbstractAstNode *child = node->getFirstChild();
+                    Exp_Stmt_Generate(child, symbol_table);
+                    logic.push(quad_list.size());
+                    Exp_Stmt_Generate(child->getNextSibling(), symbol_table);
+                    std::list<int> leftTrue, rightTrue, leftFalse, rightFalse;
+                    rightTrue = trueList.top();
+                    trueList.pop();
+                    leftTrue = trueList.top();
+                    trueList.pop();
+                    rightFalse = falseList.top();
+                    falseList.pop();
+                    leftFalse = falseList.top();
+                    falseList.pop();
+                    leftFalse.merge(rightFalse);
+                    falseList.push(leftFalse);
+                    trueList.push(rightTrue);
+                    backpatch(&leftTrue, logic.top());
+                    logic.pop();
+                    break;
+                }else if (node_content == "OR"){
+                    AbstractAstNode *child = node->getFirstChild();
+                    Exp_Stmt_Generate(child, symbol_table);
+                    logic.push(quad_list.size());
+                    Exp_Stmt_Generate(child->getNextSibling(), symbol_table);
+                    std::list<int> leftTrue, rightTrue, leftFalse, rightFalse;
+                    rightTrue = trueList.top();
+                    trueList.pop();
+                    leftTrue = trueList.top();
+                    trueList.pop();
+                    rightFalse = falseList.top();
+                    falseList.pop();
+                    leftFalse = falseList.top();
+                    falseList.pop();
+                    leftTrue.merge(rightTrue);
+                    trueList.push(leftTrue);
+                    falseList.push(rightFalse);
+                    backpatch(&leftFalse, logic.top());
+                    logic.pop();
+                    break;                    
+                }else if (node_content == "NOT"){
+                    AbstractAstNode *child = node->getFirstChild();
+                    while (child != NULL){
+                        Exp_Stmt_Generate(child, symbol_table);
+                        child = child->getNextSibling();
+                    }
+                    std::list<int> trueL, falseL;
+                    trueL = trueList.top();
+                    trueList.pop();
+                    falseL = falseList.top();
+                    falseList.pop();
+                    trueList.push(falseL);
+                    falseList.push(trueL);
+                    break;                   
+                }
             }
+                
+            
         }
             break;
         case static_cast<int>(AstNodeType::ID):{
@@ -531,14 +601,40 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
             break;
         case static_cast<int>(AstNodeType::EXPRESSION): // EXPRESSION
         {
-            if(node_content == "Const_Exp"){
-                Symbol* re = new Symbol(node->getFirstChild()->content);
-                symbol_table->addSymbol(re);
-                return re;
-            }else if(node_content == "ID_Exp"){
-                Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
-                return re;
-            }
+            // if(node->getParent()->content=="Return_Exp"){
+            //     if(node->content == "ID_Exp"){
+            //         Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
+            //         Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
+            //         QuadItem* quad = new QuadItem(re,OpType::RETURN_OP,arg1);
+            //         this->quad_list.push_back(quad);
+            //         return re;
+            //     }
+                // else if(node->content == "Const_Exp"){
+                //     QuadItem* quad = new QuadItem(std::stoi(node->getFirstChild()->content),OpType::RETURN_OP,std::stoi(node->getFirstChild()->content));
+                //     this->quad_list.push_back(quad);
+                //     Symbol* re = std::stoi(node->getFirstChild()->content);
+                //     return re;
+                    
+                // }
+              
+                
+            //}                           
+                                        
+            //}
+            //else{
+                if(node_content == "Const_Exp"){
+                    Symbol* re = new Symbol(node->getFirstChild()->content);
+                    symbol_table->addSymbol(re);
+                    return re;
+                }else if(node_content == "ID_Exp"){
+                    Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
+                    return re;
+                }
+                else if(node_content == "For_Exp"){
+                    Exp_Stmt_Generate(node->getFirstChild(),symbol_table);
+                }
+            //}
+            
         }
             break;
 
@@ -606,7 +702,7 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                         temp = temp->nextSiblingTable;
                     }
                 temp->addNextSiblingTable(symbol_table);
-                } 
+                }
                 Body_Generate(child ->getNextSibling(), if_symbol_table);                 
                 int end = quad_list.size();        
                 backpatch(&JudgeFalse, end);         
@@ -661,59 +757,49 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
             else if(node_content == "While"){
                 AbstractAstNode *child=node->getFirstChild();
                 int start = quad_list.size();
-                // std::cout<<"+++++++++"<<start<<"++++++++++++"<<std::endl;
                 Exp_Stmt_Generate(child, symbol_table);
                 std::list<int> JudgeTrue = trueList.top();                
-                std::list<int> JudgeFalse = falseList.top();
+                std::list<int> JudgeFalse = falseList.top(); 
                 trueList.pop();
-                falseList.pop();
+                falseList.pop(); 
                 backpatch(&JudgeTrue, JudgeTrue.back() + 2);
-                while (child != NULL){
-                    SymbolTable* while_symbol_table = new SymbolTable(false);
-                    while_symbol_table->setParentTable(symbol_table);
-                    if (symbol_table->firstChildTable == NULL){
-                        symbol_table->firstChildTable = while_symbol_table;
-                        std::cout<<"ADD AS FirstChild"<<std::endl;
-                    }else {
-                        SymbolTable* temp = symbol_table->firstChildTable;
-                        while(temp->nextSiblingTable != NULL){
-                            temp = temp->nextSiblingTable;
-                        }
-                        std::cout<<"ADD AS LastSibling"<<std::endl;
-                    temp->addNextSiblingTable(symbol_table);
-                    }
-                    Body_Generate(child,while_symbol_table);
+                child=child->getNextSibling();
+                while (child != NULL){ 
+                    SymbolTable* while_symbol_table = symbol_table->addChildTable(false);
+                    Body_Generate(child, while_symbol_table);
                     child = child->getNextSibling();
                 }
-                QuadItem *temp = new QuadItem(start,OpType::JUMP);
-                this->quad_list.push_back(temp);
                 int end = quad_list.size();
+                QuadItem *temp = new QuadItem(start,OpType::JUMP);
+                this->quad_list.push_back(temp);                
                 backpatch(&JudgeFalse, end);
             }
             else if(node_content == "For_Def_SEMI_Exp_SEMI_Exp"){
+                std::cout<<"======FOR FROM HERE!=============="<<std::endl;
                 AbstractAstNode *child=node->getFirstChild();
-                SymbolTable *childTable = symbol_table->addChildTable(false);
-                //definition
-                Exp_Stmt_Generate(node->getFirstChild(), childTable);
+                AbstractAstNode *for_body=child->getNextSibling()->getNextSibling()->getNextSibling();                
+                SymbolTable *for_symbol_table = symbol_table->addChildTable(false);
+                Exp_Stmt_Generate(child, for_symbol_table);
                 int start = quad_list.size();
                 //first operation
-                Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), childTable);
+                child = child->getNextSibling();
+                Exp_Stmt_Generate(child, for_symbol_table);
                 std::list<int> JudgeTrue = trueList.top();
                 std::list<int> JudgeFalse = falseList.top();
                 trueList.pop();
                 falseList.pop();
-                backpatch(&JudgeTrue, JudgeTrue.back() + 2);
-                while (child != NULL)
-                {
-                    Exp_Stmt_Generate(child, childTable);
-                    child = child->getNextSibling();
-                }
-                //statement
-                Body_Generate(node->getFirstChild()->getNextSibling()->getNextSibling()->getNextSibling(), childTable);
-                QuadItem *temp = new QuadItem(start,OpType::JUMP);
-                this->quad_list.push_back(temp);
+                backpatch(&JudgeTrue, JudgeTrue.back() + 2);                
+                Body_Generate(for_body, for_symbol_table);
+                Exp_Stmt_Generate(child->getNextSibling(), for_symbol_table);
                 int end = quad_list.size();
-                backpatch(&JudgeFalse, end);
+                QuadItem *temp = new QuadItem(start,OpType::JUMP);
+                this->quad_list.push_back(temp);                
+                backpatch(&JudgeFalse, end+1);
+            }
+            else if(node_content == "Return_Exp"){
+                AbstractAstNode *child=node->getFirstChild();
+                Exp_Stmt_Generate(child,symbol_table);
+
             }
 
         }
@@ -789,9 +875,9 @@ std::list<int> *InterCode::merge(std::list<int> *list1, std::list<int> *list2)
 void InterCode::backpatch(std::list<int> *backList, int target)
 {
     std::list<int>::iterator it;
-    // std::cout<<"========="<<*(backList->begin())<<"=========="<<std::endl;
-    // std::cout<<"========="<<*(backList->end())<<"=========="<<std::endl;
-    // std::cout<<"========="<<target<<"=========="<<std::endl;
+    std::cout<<"====backlist_begin====="<<*(backList->begin())<<"=========="<<std::endl;
+    std::cout<<"====backlist_end====="<<*(backList->end())<<"=========="<<std::endl;
+    std::cout<<"====target====="<<target<<"=========="<<std::endl;
     for (it = backList->begin(); it != backList->end(); it++)
     {
         quad_list[*it]->backpatch(target);

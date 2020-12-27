@@ -6,6 +6,7 @@
 #include <stack>
 #include "./symbol_table/symbol.h"
 #include "./intermidiate_code/interCode.h"
+#include "./asm/AsmGenerate.h"
 extern char *yytext;
 extern int yylex();
 extern void yyerror(char* s);
@@ -69,6 +70,9 @@ std::stack<SymbolTable*> SymbolTableList;
 %type <ast> Args
 %type <ast> Consts
 %type <ast> IDList
+
+%type <str> EnterScope
+%type <str> LeaveScope
 
 %%
 //start of program
@@ -136,19 +140,19 @@ Vardef:
         node->addFirstChild(var_node);
         $$ = node;
 
-        // SymbolTable* this_scope = SymbolTableList.top();
-        // printf("Get the ID's Scope\n");
-        // printf("*********\n");
-        // Symbol* syn = new Symbol($1);
-        // bool result = this_scope->addSymbol(syn);
-        // if(result == true){
-        //   printf("add ID success!\n");
-        // }
-        // else {
-        //   printf("Duplicate define!\n");
-        //   exit(1);
-        // }
-        // printf("result: %d\n", result);
+        SymbolTable* this_scope = SymbolTableList.top();
+        printf("Get the ID's Scope\n");
+        printf("*********\n");
+        Symbol* syn = new Symbol($1);
+        bool result = this_scope->addSymbol(syn);
+        if(result == true){
+          printf("add ID success!\n");
+        }
+        else {
+          printf("Duplicate define!\n");
+          exit(1);
+        }
+        printf("result: %d\n", result);
     }
   //array,like a[10]
   | IDENTIFIER '[' CONST ']'{//id[10]
@@ -182,15 +186,15 @@ Vardef:
         node->addFirstChild(var_node);
         $$ = node;
 
-        // SymbolTable* this_scope = SymbolTableList.top();
-        // Symbol* s = new Symbol($2, SymbolType::pointer);
-        // bool result = this_scope->addSymbol(s);
-        // if(result == false){
-        //   printf("Duplicate definition");
-        //   exit(1);
-        // }else{
-        //   printf("Add A Pointer\n");
-        // }
+        SymbolTable* this_scope = SymbolTableList.top();
+        Symbol* s = new Symbol($2, SymbolType::pointer);
+        bool result = this_scope->addSymbol(s);
+        if(result == false){
+          printf("Duplicate definition");
+          exit(1);
+        }else{
+          printf("Add A Pointer\n");
+        }
   }
   ;
   Consts:
@@ -328,10 +332,10 @@ Param:
   ;
 //func body {s}
 Body:
-    '{' StmtList '}'{
+    '{' EnterScope StmtList LeaveScope'}'{
       printf("body->{stmtlist} \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::BODY,"Body");
-        node->addFirstChild($2);
+        node->addFirstChild($3);
         $$ = node;
     }
     ;
@@ -786,6 +790,21 @@ IDList:
     }
   ;
 
+  EnterScope: {
+    printf("Enter {}\n");
+    SymbolTable* scope = new SymbolTable(false);
+    SymbolTableList.push(scope);
+    printf("Scope created! ");
+    printf(" Size now:%d\n",SymbolTableList.size());
+  }
+  ;
+  LeaveScope: {
+    printf("Scope pop\n");
+    SymbolTableList.pop();
+    printf("Leave {}\n");
+    printf(" Size now:%d\n",SymbolTableList.size());
+  }
+  ;
 %%
 int  main(int argc, char** argv)
 {
@@ -803,6 +822,9 @@ int  main(int argc, char** argv)
 	} while(!feof(yyin));
   InterCode interCode = InterCode(root);
   interCode.Root_Generate();
+  //AsmGenerate* asmgenerate = new AsmGenerate(interCode.getQuadlist(), interCode.getTempVars(), interCode.getTable(), interCode.getFuncTable());
+  AsmGenerate* asmgenerate = new AsmGenerate(interCode.getQuadlist(),  interCode.getTable());
+  asmgenerate->generate();
   return 0;
 
 }

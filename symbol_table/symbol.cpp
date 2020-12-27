@@ -80,7 +80,9 @@ Symbol* SymbolTable:: findSymbolGlobally(std::string name){
 }
 
 SymbolTable* SymbolTable:: addChildTable(bool isFunc){
+    // cout<<"add Child Table"<<endl;
     SymbolTable* child = new SymbolTable(isFunc, this);
+    // cout<<"Create Child Table and add parent"<<endl;
     if (this->firstChildTable == NULL){
         this->firstChildTable = child;
     }else {

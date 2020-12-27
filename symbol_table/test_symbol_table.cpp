@@ -11,36 +11,19 @@ int main(){
     Symbol* a4 = new Symbol(string("a4"), SymbolType::integer);
     Symbol* a5 = new Symbol(string("a5"), SymbolType::integer);
     SymbolTable* mainScope = new SymbolTable(true, NULL);
-    SymbolTable* subScope = new SymbolTable(false, mainScope);
+    SymbolTable* subScope = mainScope->addChildTable(false);
     mainScope->addSymbol(a1);
     mainScope->addSymbol(a2);
     mainScope->addSymbol(a3);
     subScope->addSymbol(a4);
     SymbolTable* subScope2 = mainScope->addChildTable(false);
     subScope2->addSymbol(a5);
-
-    Symbol* re = subScope->findSymbolLocally("a3");
-    if(re == NULL){
-        cout<<"a3 is not in subScope"<<endl;
+    SymbolTable* fa = subScope->getParentTable();
+    if(subScope2 == subScope->getNextSiblingTable()){
+        cout<<"subs is sibling of sub"<<endl;
     }
-    else cout<<"a3 is in subScope"<<endl;
-
-    re = mainScope->findSymbolLocally("a3");
-    if(re == NULL){
-        cout<<"a3 is not in mainScope local"<<endl;
+    if(subScope->getNextSiblingTable()->findSymbolLocally("a5")){
+        cout<<"RIGHT!"<<endl;
     }
-    else cout<<"a3 is in mainScope local"<<endl;
-
-    re = mainScope->findSymbolLocally("a5");
-    if(re == NULL){
-        cout<<"a5 is not in mainScope local"<<endl;
-    }
-    else cout<<"a5 is in mainScope local"<<endl;
-
-    re = subScope2->findSymbolLocally("a5");
-    if(re == NULL){
-        cout<<"a5 is not in subScope2 local"<<endl;
-    }
-    else cout<<"a5 is in subScope2 local"<<endl;
     return 0;
 }

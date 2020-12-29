@@ -48,8 +48,8 @@ public:
     QuadItem(Symbol* result, OpType op, Symbol* arg1, int arg2);
     QuadItem(Symbol* result, OpType op, int arg1, Symbol* arg2);
     QuadItem(Symbol* result, OpType op, Symbol* arg1, Symbol* arg2);
-    QuadItem(Symbol* result, OpType op, int arg1);
-    QuadItem(Symbol* result, OpType op, Symbol* arg1);
+    QuadItem(Symbol* result, OpType op, int arg1);  //assign const to var;
+    QuadItem(Symbol* result, OpType op, Symbol* arg1); //assign var to var;
     QuadItem(int result,OpType op, Symbol* arg1, Symbol* arg2);    
     QuadItem(int result, OpType op, int arg1);
     void printItemInfor(int i);

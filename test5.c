@@ -1,16 +1,19 @@
 
 int main(){
-  int a=1;
-  int b=0;
-  int e ;
-  if(!(a>b||b>=3)){
-    int c = 0;
-    for(c = 1;c<5;c=c+1){
-      int e = 0;
-    }
-
+  int b=2;
+  int a ;
+  if(b<100 ){
+    b = 10;
+    a = b%10;
   }
-  
+  else {
+    a = b-10;
+  }
+  while(a > b){
+    a = a/2;
+  }
+  int c;
+  int e;
 }
   
 

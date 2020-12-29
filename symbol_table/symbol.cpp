@@ -23,7 +23,7 @@ SymbolTable:: SymbolTable(bool isFunc){
     this->nextSiblingTable = NULL;
     this->parentTable = NULL;
     this->baseTable = NULL;
-    this->offset = 0;
+    this->total_offset = 0;
     if(isFunc){
         symbolArray = new std::vector<Symbol* >();
         argArray = new std::vector<Symbol*>();
@@ -34,7 +34,7 @@ SymbolTable:: SymbolTable(bool isFunc, SymbolTable* parent){
     this->firstChildTable = NULL;
     this->nextSiblingTable = NULL;
     this->parentTable = parent;
-    this->offset = 0;
+    this->total_offset = 0;
     SymbolTable* temp = this;
     while(!temp->isFunctionTable){
         temp = temp->parentTable;
@@ -82,7 +82,6 @@ Symbol* SymbolTable:: findSymbolGlobally(std::string name){
 SymbolTable* SymbolTable:: addChildTable(bool isFunc){
     SymbolTable* child = new SymbolTable(isFunc);
     child->setParentTable(this);
-    // cout<<"Create Child Table and add parent"<<endl;
     if (this->firstChildTable == NULL){
         this->firstChildTable = child;
     }else {
@@ -99,22 +98,4 @@ void SymbolTable:: addNextSiblingTable(SymbolTable* ns){
     this->nextSiblingTable = ns;
     ns->parentTable = this->parentTable;
 }
-
-// void buildSymbolTableTree(AbstractAstNode* node, SymbolTable* table){
-//    AbstractAstNode* child = node->getFirstChild();
-//    while(child!=NULL){
-//        AstNodeType child_type = child->getAstNodeType();
-//        std::string child_content = child->getContent();
-//         if (child_type == AstNodeType::ID){
-//             Symbol* s = new Symbol(child_content, SymbolType::integer);
-//             table->addSymbol(s);
-//         }
-//         else if(child_type == AstNodeType::BODY){
-//             SymbolTable* subTable = table->addChildTable(false); 
-//             buildSymbolTableTree(child, subTable);
-//         }
-//        child = child->getNextSibling();
-//    }
-
-// }
 

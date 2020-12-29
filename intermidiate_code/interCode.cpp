@@ -2,6 +2,7 @@
 #include <typeinfo>
 #include <sstream>
 #include <string>
+#include <iostream>
 #include<list>
 
 QuadItem:: QuadItem(Symbol* result, OpType op, int arg1, int arg2){
@@ -50,6 +51,12 @@ QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1){
     this->result.var = result;
     this->op = op;
     this->arg1.var = arg1;
+    this->quad_item_type = 7;
+}
+QuadItem:: QuadItem(Symbol* result, OpType op, int arg1){
+    this->result.var = result;
+    this->op = op;
+    this->arg1.target = arg1;
     this->quad_item_type = 7;
 }
 QuadItem::QuadItem(int result,OpType op)
@@ -283,8 +290,8 @@ void InterCode:: Root_Generate(){
     int i=0;
     while(i < len){
         quad_list[i]->printItemInfor(i);
-        Symbol* arg1 = quad_list[i]->arg1.var;
-        Symbol* arg2 = quad_list[i]->arg2.var;
+        // Symbol* arg1 = quad_list[i]->arg1.var;
+        // Symbol* arg2 = quad_list[i]->arg2.var;
         //if(arg1 != NULL)quad_list[i]->arg1.var->showSymbolInfor();
         //if(arg2 != NULL)quad_list[i]->arg2.var->showSymbolInfor();
         i++;
@@ -394,7 +401,7 @@ void InterCode:: Generate(AbstractAstNode* node) {
                 {
                     if(node->getParent()->getFirstChild()->getNextSibling()->getFirstChild()->content == "main"){
                         // 进入了main 函数的body：
-                        SymbolTable* symbol_table = new SymbolTable(false);
+                        SymbolTable* symbol_table = this->rootTable->addChildTable(false);
                         Body_Generate(node, symbol_table);
                         // Symbol* a = symbol_table->findSymbolLocally("a");
                         // Symbol* b = symbol_table->findSymbolLocally("b");
@@ -624,7 +631,9 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
             //else{
                 if(node_content == "Const_Exp"){
                     Symbol* re = new Symbol(node->getFirstChild()->content);
-                    symbol_table->addSymbol(re);
+                    // symbol_table->setOffset(symbol_table->getOffset()+re->getWidth()); 
+                    // re->setSymOffset(symbol_table->getOffset());
+                    // symbol_table->addSymbol(re);
                     return re;
                 }else if(node_content == "ID_Exp"){
                     Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
@@ -832,12 +841,20 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                     var_name = child->getFirstChild()->getFirstChild()->content;
                     const_value = child->getFirstChild()->getNextSibling()->getFirstChild()->content;
                     Symbol* var = new Symbol(var_name, SymbolType:: var, 4, const_value);
+                    var->setSymOffset(symbol_table->getOffset()+var->getWidth());
+                    symbol_table->setOffset(symbol_table->getOffset()+var->getWidth()); 
+                    var->setSymOffset(symbol_table->getOffset());
                     symbol_table->addSymbol(var);
-                    std::cout<<"Add Symbol "<<var_name<<" into SymbolTable!"<<std::endl;
+                    Symbol* _const = new Symbol(const_value);
+                    QuadItem* quad = new  QuadItem(var, assign, _const);
+                    this->quad_list.push_back(quad);
+                    // std::cout<<"Add Symbol "<<var_name<<" into SymbolTable!"<<std::endl;
                 }else if(child->content == "Var_ONLY"){
                     std::string var_name;
                     var_name = child->getFirstChild()->getFirstChild()->content;
                     Symbol* var = new Symbol(var_name, SymbolType:: var, 4);
+                    symbol_table->setOffset(symbol_table->getOffset()+var->getWidth()); 
+                    var->setSymOffset(symbol_table->getOffset());
                     symbol_table->addSymbol(var);
                     std::cout<<"Add Symbol "<<var_name<<" into SymbolTable!"<<std::endl;
                     // TBD

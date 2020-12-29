@@ -21,6 +21,7 @@ private:
     std::string idName;
     SymbolType idType;
     int width;
+    int sym_offset;
     std::string value;
 public:
     Symbol();
@@ -29,10 +30,13 @@ public:
     inline SymbolType &getSymbolType(){return this->idType;}
     inline int getWidth(){return this->width;}
     inline void setWidth(int width){this->width = width;}
+    inline int getSymOffset(){return this->sym_offset;}
+    inline void setSymOffset(int offset){this->sym_offset = offset;}
     inline void showSymbolInfor(){
         std::cout<<"Symbol Name: "<<this->idName
                  <<"\tSymbol Addr: "<<this
                  <<"\tSymbol vale: "<<this->value
+                 <<"\tSymbol offset: "<<this->sym_offset
                  <<"\twitdth: "<<this->width
                  <<"\tSymbol Type: "<<static_cast<int>(this->idType)<<std::endl;
     }
@@ -52,7 +56,7 @@ public:
     SymbolTable* firstChildTable;
     SymbolTable* nextSiblingTable;
     bool isFunctionTable;
-    int offset;
+    int total_offset;
     int symbolNumber; // symbol numbers in baseTable;
     //the function table this table is embedded in 
     SymbolTable* baseTable;
@@ -68,11 +72,19 @@ public:
     inline SymbolTable* getNextSiblingTable(){return this->nextSiblingTable;}
     inline int getSymbolNumber(){return this->symbolNumber;}
     inline void setParentTable(SymbolTable* parentTable){this->parentTable = parentTable;}
-    inline int getOffset(){return this->offset;}
-    inline int setOffset(int increament){this->offset += increament; }
+    inline int getOffset(){return this->total_offset;}
+    inline int setOffset(int new_offset){this->total_offset = new_offset; }
     SymbolTable* addChildTable(bool isFunc);
     void addNextSiblingTable(SymbolTable* ns);
     Symbol* findSymbolGlobally(const std::string name);
+    inline void showSymbols(){
+        std::cout << "SymbolMap contains:\n";
+        for ( auto it = SymbolMap.begin(); it != SymbolMap.end(); ++it )
+        {
+            std::cout << " " << it->first << ":" ;it->second->showSymbolInfor();
+        }
+        std::cout << std::endl;
+    }
 
 };
 

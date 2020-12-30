@@ -71,9 +71,6 @@ std::stack<SymbolTable*> SymbolTableList;
 %type <ast> Consts
 %type <ast> IDList
 
-%type <str> EnterScope
-%type <str> LeaveScope
-
 %%
 //start of program
 Program:
@@ -84,18 +81,18 @@ Program:
         printAst(root);
     }
   ;
-//with one or more block
+//a program is one or more blocks
 BlockList:
     /*单个语句块*/
     Block{
-      printf("Blocklist->block \n");
+      // printf("Blocklist->block \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"Single_Block");
         node->addFirstChild($1);
         $$ = node;
     }
     /*多个语句块*/
   | BlockList Block{
-    printf("blocklist->blocklist block \n");
+    // printf("blocklist->blocklist block \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"Some_Block");
         node->addFirstChild($1);
         $1->addNextSibling($2);
@@ -106,7 +103,7 @@ BlockList:
 Block:
     /*全局变量定义*/
     Descriptor DefList SEMI{
-      printf("blcok->Descriptor Vardef SEMI \n");
+      // printf("blcok->Descriptor Vardef SEMI \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Def_Var_Block");        
         node->addFirstChild($1);        
         $1->addNextSibling($2);        
@@ -114,7 +111,7 @@ Block:
     }
     /*函数定义，包含函数体*/
   | Descriptor Func Body{
-    printf("block->Descriptor Func Body \n");
+    // printf("block->Descriptor Func Body \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Def_Func_Body_Block");
         node->addFirstChild($1);
         $1->addNextSibling($2);
@@ -123,7 +120,7 @@ Block:
     }
     /*无函数体函数定义*/
   | Descriptor Func SEMI{
-    printf("block->Descriptor Func SEMI \n");
+    // printf("block->Descriptor Func SEMI \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Def_Func_NBody_Block");
         node->addFirstChild($1);
         $1->addNextSibling($2);
@@ -133,30 +130,16 @@ Block:
 //ok
 Vardef:
     /*单个变量*/
-    IDENTIFIER{//a ok
-      printf("vardef->identifier \n");
+    IDENTIFIER{
+      // printf("vardef->identifier \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Block_Single_Vardef");
         AbstractAstNode* var_node = new AbstractAstNode(AstNodeType::ID, $1);
         node->addFirstChild(var_node);
         $$ = node;
-
-        // SymbolTable* this_scope = SymbolTableList.top();
-        // printf("Get the ID's Scope\n");
-        // printf("*********\n");
-        // Symbol* syn = new Symbol($1);
-        // bool result = this_scope->addSymbol(syn);
-        // if(result == true){
-        //   printf("add ID success!\n");
-        // }
-        // else {
-        //   printf("Duplicate define!\n");
-        //   exit(1);
-        // }
-        // printf("result: %d\n", result);
     }
   //array,like a[10]
   | IDENTIFIER '[' CONST ']'{//id[10]
-    printf("vardef->identifier[const] \n");
+    // printf("vardef->identifier[const] \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::ARRAY,"array_id[const]");
         AbstractAstNode* const_node = new AbstractAstNode(AstNodeType::CONST_INT, $3);
         AbstractAstNode* var_node = new AbstractAstNode(AstNodeType::ID, $1);
@@ -164,8 +147,8 @@ Vardef:
         var_node->addNextSibling(const_node);
         $$ = node;
     }
-  | IDENTIFIER '[' Exp ']'{//id[n] in function(param)
-    printf("vardef->identifier[exp] \n");
+  | IDENTIFIER '[' Exp ']'{
+    // printf("vardef->identifier[exp] \n");
       AbstractAstNode* node = new AbstractAstNode(AstNodeType::ARRAY,"array_id[exp]");
       AbstractAstNode* var_node = new AbstractAstNode(AstNodeType::ID, $1);
       node->addFirstChild(var_node);
@@ -173,33 +156,23 @@ Vardef:
       $$ = node;
   }
   | IDENTIFIER '[' ']'{//id[]
-    printf("vardef->identifier[] \n");
+    // printf("vardef->identifier[] \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::ARRAY,"array_id[]");
         AbstractAstNode* var_node = new AbstractAstNode(AstNodeType::ID, $1);
         node->addFirstChild(var_node);
         $$ = node;
     }
   | MUL IDENTIFIER{
-    printf("vardef->*identifier \n");
+    // printf("vardef->*identifier \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::ARRAY,"array_*id");
         AbstractAstNode* var_node = new AbstractAstNode(AstNodeType::ID, $2);
         node->addFirstChild(var_node);
         $$ = node;
-
-        // SymbolTable* this_scope = SymbolTableList.top();
-        // Symbol* s = new Symbol($2, SymbolType::pointer);
-        // bool result = this_scope->addSymbol(s);
-        // if(result == false){
-        //   printf("Duplicate definition");
-        //   exit(1);
-        // }else{
-        //   printf("Add A Pointer\n");
-        // }
   }
   ;
   Consts:
     Consts COMMA CONST{
-    printf("consts->consts const \n");
+    // printf("consts->consts const \n");
       AbstractAstNode* node = new AbstractAstNode(AstNodeType::EXPRESSION,"consts_array");
       AbstractAstNode* const_node = new AbstractAstNode(AstNodeType::CONST_INT, $3);
       node->addFirstChild($1);
@@ -207,7 +180,7 @@ Vardef:
       $$ = node;
     }
   | CONST{
-      printf("consts->const \n");
+      // printf("consts->const \n");
       AbstractAstNode* node = new AbstractAstNode(AstNodeType::EXPRESSION,"const_array");
       AbstractAstNode* const_node = new AbstractAstNode(AstNodeType::CONST_INT, $1);
       node->addFirstChild(const_node);
@@ -219,24 +192,18 @@ Vardef:
 //
 Descriptor:
     INT{
-        printf("descriptor->int \n");
+        // printf("descriptor->int \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::MODIFY,"INT_TYPE");
-        // AbstractAstNode* int_node=new AbstractAstNode(AstNodeType::TYPE,$1);
-        // node->addFirstChild(int_node);
         $$ = node;
     }
   | VOID{
-        printf("descriptor->void \n");
+        // printf("descriptor->void \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::MODIFY,"VOID_TYPE");
-        // AbstractAstNode* void_node = new AbstractAstNode(AstNodeType::TYPE,$1);
-        // node->addFirstChild(void_node);
         $$ = node;
     }
   | INT MUL{//int*
-        printf("descriptor->int mul \n");
+        // printf("descriptor->int mul \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::MODIFY,"INT*_TYPE");
-        // AbstractAstNode* int_node = new AbstractAstNode(AstNodeType::TYPE,$1);
-        // node->addFirstChild(int_node);
         $$ = node;
     }
   ;
@@ -244,7 +211,7 @@ Descriptor:
 Func:
     /*无参函数*/
     IDENTIFIER '('  ')'{
-      printf("func->identfier() \n");
+      // printf("func->identfier() \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Func_NParam");
         AbstractAstNode* id_node = new AbstractAstNode(AstNodeType::ID, $1);
         node->addFirstChild(id_node);
@@ -252,7 +219,7 @@ Func:
     }
   | /*含参函数*/
     IDENTIFIER '(' VarList ')'{
-      printf("func->identifier(varlist) \n");
+      // printf("func->identifier(varlist) \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Func_Params");
         AbstractAstNode* id_node = new AbstractAstNode(AstNodeType::ID, $1);
         //node->addFirstChild(id_node);
@@ -266,7 +233,7 @@ Func:
 VarList:
     /*多个参数*/
     VarList COMMA Param{
-      printf("varlist->varlist,param \n");
+      // printf("varlist->varlist,param \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Some_Param");
         node->addFirstChild($1);
         $1->addNextSibling($3);
@@ -274,7 +241,7 @@ VarList:
     }
     /*单个参数*/
   | Param{
-    printf("varlist->param \n");
+    // printf("varlist->param \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Single_Param");
         node->addFirstChild($1);
         $$ = node;
@@ -282,7 +249,7 @@ VarList:
   ;
 Param:
     Descriptor IDENTIFIER{
-      printf("param->descriptor identifier \n");
+      // printf("param->descriptor identifier \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Param_ID");
         AbstractAstNode* id_node = new AbstractAstNode(AstNodeType::ID, $2);
         node->addFirstChild($1);
@@ -290,7 +257,7 @@ Param:
         $$ = node;
     }
   | Descriptor IDENTIFIER '[' ']'{
-      printf("param->descriptor identifier[] \n");
+      // printf("param->descriptor identifier[] \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Param_ID[]");
         AbstractAstNode* id_node = new AbstractAstNode(AstNodeType::ID, $2);
         node->addFirstChild($1);
@@ -298,7 +265,7 @@ Param:
         $$ = node;
     }
   | Descriptor IDENTIFIER '[' CONST ']'{
-      printf("param->descriptor identifier[const] \n");
+      // printf("param->descriptor identifier[const] \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Param_ID[const]");
         AbstractAstNode* id_node = new AbstractAstNode(AstNodeType::ID, $2);
         AbstractAstNode* const_node = new AbstractAstNode(AstNodeType::CONST_INT, $4);
@@ -308,7 +275,7 @@ Param:
         $$ = node;
     }
   | Descriptor SINGLAND IDENTIFIER{
-    printf("param->&identifier \n");
+    // printf("param->&identifier \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::ARRAY,"array_&id");
         AbstractAstNode* var_node = new AbstractAstNode(AstNodeType::ID, $3);
         node->addFirstChild($1);
@@ -316,7 +283,7 @@ Param:
         $$ = node;
     }
   | Descriptor MUL IDENTIFIER{
-    printf("param->*identifier \n");
+    // printf("param->*identifier \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::ARRAY,"array_*id");
         AbstractAstNode* var_node = new AbstractAstNode(AstNodeType::ID, $3);
         node->addFirstChild($1);
@@ -324,7 +291,7 @@ Param:
         $$ = node;
   }
   | Descriptor {
-    printf("param->descriptor \n");
+    // printf("param->descriptor \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Param_NID");
         node->addFirstChild($1);
         $$ = node;
@@ -332,10 +299,10 @@ Param:
   ;
 //func body {s}
 Body:
-    '{' EnterScope StmtList LeaveScope'}'{
-      printf("body->{stmtlist} \n");
+    '{'StmtList'}'{
+      // printf("body->{stmtlist} \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::BODY,"Body");
-        node->addFirstChild($3);
+        node->addFirstChild($2);
         $$ = node;
     }
     ;
@@ -343,7 +310,7 @@ Body:
 StmtList:
     /*语句*/
 	StmtList Stmt{
-    printf("stmtlist->stmtlist stmt \n");
+    // printf("stmtlist->stmtlist stmt \n");
 	    AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"Some_Stmt");
 	    if ($1 == NULL) {
 	        node->addFirstChild($2);
@@ -362,14 +329,14 @@ StmtList:
 Stmt:
     /*表达式语句*/
     Exp SEMI{
-      printf("stmt->exp; \n");
+      // printf("stmt->exp; \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"Exp_Stmt");
         node->addFirstChild($1);
         $$ = node;
     }
     /*声明语句*/
   | Def SEMI{
-    printf("stmt->def; \n");
+    // printf("stmt->def; \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"Def_Stmt");
         node->addFirstChild($1);
         $$ = node;
@@ -377,13 +344,13 @@ Stmt:
     }
     /*函数体{}*/
   | Body{
-    printf("stmt->body \n");
+    // printf("stmt->body \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"Body_Stmt");
         node->addFirstChild($1);
         $$ = node;
     }
   | RETURN Exp SEMI{
-    printf("stmt->return exp ; \n");
+    // printf("stmt->return exp ; \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"Return_Exp");
         // AbstractAstNode* return_node = new AbstractAstNode(AstNodeType::RETURN,$1);
         // node->addFirstChild(return_node);
@@ -392,14 +359,14 @@ Stmt:
         $$ = node;
     }
   | RETURN SEMI{
-    printf("stmt->return ; \n");
+    // printf("stmt->return ; \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"Return_Void");
         // AbstractAstNode* return_node = new AbstractAstNode(AstNodeType::RETURN,$1);
         // node->addFirstChild(return_node);
         $$ = node;
     }
   | IF '(' Exp ')' Stmt {
-    printf("stmt->if(exp)stmt \n");
+    // printf("stmt->if(exp)stmt \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"If");
         // AbstractAstNode* if_node = new AbstractAstNode(AstNodeType::SELECT,$1);
         // node->addFirstChild(if_node);
@@ -409,62 +376,47 @@ Stmt:
         $$ = node;
     }
   | IF '(' Exp ')' Stmt ELSE Stmt %prec LOWER_THAN_ELSE{
-    printf("stmt->if(exp)stmt else stmt \n");
+    // printf("stmt->if(exp)stmt else stmt \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"If_Else");
-        // AbstractAstNode* if_node = new AbstractAstNode(AstNodeType::SELECT,$1);
-        // AbstractAstNode* else_node = new AbstractAstNode(AstNodeType::SELECT,$6);
-        // node->addFirstChild(if_node);
         node->addFirstChild($3);
         $3->addNextSibling($5);
         $5->addNextSibling($7);
         $$ = node;
     }
   | WHILE '(' Exp ')' Stmt{
-    printf("stmt->while ( exp) stmt \n");
+    // printf("stmt->while ( exp) stmt \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"While");
-        // AbstractAstNode* while_node = new AbstractAstNode(AstNodeType::LOOP,$1);
-        // node->addFirstChild(while_node);
         node->addFirstChild($3);
         $3->addNextSibling($5);
         $$ = node;
     }
   | FOR '(' SEMI SEMI ')' Stmt{
-    printf("stmt->for ( ;; \n");
+    // printf("stmt->for ( ;; \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"For_SEMI_SEMI");
-        // AbstractAstNode* for_node = new AbstractAstNode(AstNodeType::LOOP,$1);
-        // node->addFirstChild(for_node);
         node->addFirstChild($6);
         $$ = node;
     }
   | FOR '(' Fordef SEMI SEMI ')' Stmt{
-    printf("stmt->for(fordef;;)stmt \n");
+    // printf("stmt->for(fordef;;)stmt \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"For_Def_SEMI_SEMI");
-        // AbstractAstNode* for_node = new AbstractAstNode(AstNodeType::LOOP,$1);
-        // node->addFirstChild(for_node);
         node->addFirstChild($3);
         $3->addNextSibling($7);
         $$ = node;
     }
   | FOR '(' SEMI Exp SEMI')' Stmt{
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"For_SEMI_Exp_SEMI");
-        // AbstractAstNode* for_node = new AbstractAstNode(AstNodeType::LOOP,$1);
-        // node->addFirstChild(for_node);
         node->addFirstChild($4);
         $4->addNextSibling($7);
         $$ = node;
     }
   | FOR '(' SEMI SEMI Exp ')' Stmt{
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"For_SEMI_SEMI_Exp");
-        // AbstractAstNode* for_node = new AbstractAstNode(AstNodeType::LOOP,$1);
-        // node->addFirstChild(for_node);
         node->addFirstChild($5);
         $5->addNextSibling($7);
         $$ = node;
     }
   | FOR '(' Fordef SEMI Exp SEMI Exp ')' Stmt{
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"For_Def_SEMI_Exp_SEMI_Exp");
-        // AbstractAstNode* for_node = new AbstractAstNode(AstNodeType::LOOP,$1);
-        // node->addFirstChild(for_node);
         node->addFirstChild($3);
         $3->addNextSibling($5);
         $5->addNextSibling($7);
@@ -473,8 +425,6 @@ Stmt:
     }
   | FOR '(' Fordef SEMI Exp SEMI ')'Stmt{
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"For_Def_SEMI_Exp_SEMI");
-        // AbstractAstNode* for_node = new AbstractAstNode(AstNodeType::LOOP,$1);
-        // node->addFirstChild(for_node);
         node->addFirstChild($3);
         $3->addNextSibling($5);
         $5->addNextSibling($8);
@@ -482,8 +432,6 @@ Stmt:
     }
   | FOR '(' Fordef SEMI SEMI Exp ')' Stmt{
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"For_Def_SEMI_SEMI_Exp");
-        // AbstractAstNode* for_node = new AbstractAstNode(AstNodeType::LOOP,$1);
-        // node->addFirstChild(for_node);
         node->addFirstChild($3);
         $3->addNextSibling($6);
         $6->addNextSibling($8);
@@ -491,8 +439,6 @@ Stmt:
     }
   | FOR '(' SEMI Exp SEMI Exp ')' Stmt{
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::STATEMENT,"For_SEMI_Exp_SEMI_Exp");
-        // AbstractAstNode* for_node = new AbstractAstNode(AstNodeType::LOOP,$1);
-        // node->addFirstChild(for_node);
         node->addFirstChild($4);
         $4->addNextSibling($6);
         $6->addNextSibling($8);
@@ -528,7 +474,7 @@ Stmt:
 //with descriptor cannot
 Def:
     Descriptor DefList{//!!
-      printf("def->descriptor deflist \n");
+      // printf("def->descriptor deflist \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Def_Var");
         node->addFirstChild($1);
         $1->addNextSibling($2);
@@ -539,14 +485,14 @@ Def:
 DefList:
     /*单变量声明*/
     Var{//ok
-    printf("deflist->var \n");
+    // printf("deflist->var \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Def_Single_Var");
         node->addFirstChild($1);
         $$ = node;
     }
     /*多变量声明*/
   | Var COMMA DefList{//ok
-    printf("deflist->var ,deflist \n");
+    // printf("deflist->var ,deflist \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Def_Some_Var");
         node->addFirstChild($1);
         $1->addNextSibling($3);
@@ -557,14 +503,14 @@ DefList:
 Var:
     /*仅声明*/
     Vardef{//ok
-      printf("var->vardef \n");
+      // printf("var->vardef \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Var_ONLY");
         node->addFirstChild($1);
         $$=node;
     }
     /*声明且赋值*/
   | Vardef ASSIGN_OP Exp{//ok a,b=c
-    printf("var->vardef = exp \n");
+    // printf("var->vardef = exp \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"Var_ASSIGN");
         node->addFirstChild($1);
         $1->addNextSibling($3);
@@ -575,13 +521,13 @@ Var:
 //with def->descriptor not test
 Fordef:
     Def{
-      printf("fordef->def \n");
+      // printf("fordef->def \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"For_Def");
         node->addFirstChild($1);
         $$=node;
     }
   | Exp{//a=1 ok
-    printf("fordef->exp \n");
+    // printf("fordef->exp \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::DEFINITION,"For_Exp");
         node->addFirstChild($1);
         $$=node;
@@ -682,7 +628,7 @@ Exp:
         $$=node;
     }
   | '{' Consts '}'{//{1,2,3}
-    printf("expr->{consts}\n");
+    // printf("expr->{consts}\n");
     AbstractAstNode* node = new AbstractAstNode(AstNodeType::ARRAY,"{consts}");
     node->addFirstChild($2);
     $$=node;
@@ -725,7 +671,7 @@ Exp:
     }
     
   | IDENTIFIER '(' Args ')' {
-    printf("exp->id '(' Args ')' \n");
+    // printf("exp->id '(' Args ')' \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::CALL, "Call_Args_Func");
         AbstractAstNode* id_node = new AbstractAstNode(AstNodeType::ID, $1);
         node->addFirstChild(id_node);
@@ -733,7 +679,7 @@ Exp:
         $$ = node;
     }
   | IDENTIFIER '(' ')' {
-    printf("exp->id '('  ')' \n");
+    // printf("exp->id '('  ')' \n");
         AbstractAstNode* node = new AbstractAstNode(AstNodeType::CALL, "Call_NArgs_Func");
         AbstractAstNode* id_node = new AbstractAstNode(AstNodeType::ID, $1);
         node->addFirstChild(id_node);
@@ -790,21 +736,6 @@ IDList:
     }
   ;
 
-  EnterScope: {
-    printf("Enter {}\n");
-    SymbolTable* scope = new SymbolTable(false);
-    SymbolTableList.push(scope);
-    printf("Scope created! ");
-    printf(" Size now:%d\n",SymbolTableList.size());
-  }
-  ;
-  LeaveScope: {
-    printf("Scope pop\n");
-    SymbolTableList.pop();
-    printf("Leave {}\n");
-    printf(" Size now:%d\n",SymbolTableList.size());
-  }
-  ;
 %%
 int  main(int argc, char** argv)
 {
@@ -823,7 +754,6 @@ int  main(int argc, char** argv)
   InterCode interCode = InterCode(root);
   interCode.Root_Generate();
   SymbolTable* root_table = interCode.getTable();
-  // root_table->showSymbols();
   root_table->getfirstChildTable()->showSymbols();
   //AsmGenerate* asmgenerate = new AsmGenerate(interCode.getQuadlist(), interCode.getTempVars(), interCode.getTable(), interCode.getFuncTable());
   AsmGenerate* asmgenerate = new AsmGenerate(interCode.getQuadlist(),  interCode.getTable());
@@ -835,5 +765,5 @@ int  main(int argc, char** argv)
 
 void yyerror(char *s)
 {
-  // fprintf(stderr, "error: %s\n", s);
+  fprintf(stderr, "error: %s\n", s);
 }

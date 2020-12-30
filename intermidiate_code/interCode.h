@@ -87,7 +87,7 @@ public:
     InterCode(AbstractAstNode* root);
     Symbol* Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol_table);
     SymbolTable* Body_Generate(AbstractAstNode* node, SymbolTable* symbol_table);
-    void Generate(AbstractAstNode* node);
+    void Generate(AbstractAstNode* node, SymbolTable* symbol_tabl);
     void Root_Generate();
     int getFalseJump(int i);
     void addItem(QuadItem* item);

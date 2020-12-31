@@ -869,10 +869,14 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
                 Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table);
                 // 进行类型检查；type的值是枚举类型symbolType决定的；
-                if(static_cast<int>(arg1->getSymbolType()) != static_cast<int>(re->getSymbolType()) ){
-                    std::cout<<"Cannot assign type"<<static_cast<int>(arg1->getSymbolType())<<" to type"
-                    <<static_cast<int>(re->getSymbolType())<<std::endl;
+                if(static_cast<int>(arg1->getSymbolType())== 2 && static_cast<int>(re->getSymbolType()) == 5 )
+                {
+                    std::cout<<"\033[31m Error!Cannot assign an int_var to a pointer\033[0m"<<std::endl;
                     exit(1);
+                }
+                else if(static_cast<int>(arg1->getSymbolType())== 5 && static_cast<int>(re->getSymbolType()) == 2 )
+                {
+                    std::cout<<"\033[31m Warning! Assign a pointer to an int_var directly.\n\033[0m"<<std::endl;
                 }
                 QuadItem* quad;
                 if(isNumber(arg1->getIDName())){
@@ -882,8 +886,8 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                     quad = new QuadItem(re, op, arg1);
                 }
                 this->quad_list.push_back(quad);
-                std::cout<<"quad_list Size: "<<quad_list.size()
-                <<"quad type: "<<quad->getItemType()<<std::endl;
+                // std::cout<<"quad_list Size: "<<quad_list.size()
+                // <<"quad type: "<<quad->getItemType()<<std::endl;
                 return re;
             } 
             else if(node_content == "EQ_OP" ||
@@ -1002,11 +1006,11 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
             {
                 std::string array_name = node->getFirstChild()->content;
                 AbstractAstNode* index_exp_astNode = node->getFirstChild()->getNextSibling();
+                // index_symbol 已经进入符号表中了；
                 Symbol* index_symbol = Exp_Stmt_Generate(index_exp_astNode, symbol_table);
                 std::string index_content = index_symbol->getIDName();
-                // Symbol* re = new Symbol("t"+std::to_string(temp_list.size()), SymbolType::temp_var, 4);
-                // QuadItem* quad1 = new QuadItem(re, assign, )
-                
+                Symbol* re = new Symbol(array_name+"[ "+index_content+" ]", SymbolType::var, 4);
+                return re;
             }
             
         }
@@ -1215,26 +1219,31 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                 AbstractAstNode* child = node->getFirstChild();
                 AbstractAstNode* mod_node = node->getParent()->getFirstChild();
                 if (child->content == "Var_ASSIGN"){
-                    std::string var_name;
-                    std::string const_value;
-                    var_name = child->getFirstChild()->getFirstChild()->content;
+                    std::string var_name = child->getFirstChild()->getFirstChild()->content;
                     Symbol* dup_check = symbol_table->findSymbolLocally(var_name);
                     if(dup_check!= NULL && static_cast<int>(dup_check->getSymbolType()) == 2 )
                     {
                         std::cout<<"Error! Duplicate defination for Variable_name "<<var_name<<std::endl;
                         exit(1);
                     }
-                    const_value = child->getFirstChild()->getNextSibling()->getFirstChild()->content;
-                    Symbol* var = new Symbol(var_name, SymbolType:: var, 4, const_value);
+
+                    Symbol* arg1;
+                    AbstractAstNode* arg1_astNode = child->getFirstChild()->getNextSibling();
+                    arg1 = Exp_Stmt_Generate(arg1_astNode, symbol_table);
+                    std::string arg1_content = arg1->getIDName();
+                    
+                    Symbol* var = new Symbol(var_name, SymbolType:: var, 4);
                     symbol_table->setOffset(symbol_table->getOffset()+var->getWidth()); 
                     var->setSymOffset(symbol_table->getOffset());
                     symbol_table->addSymbol(var);
-                    Symbol* arg1 = new Symbol(const_value);
                     QuadItem* quad;
-                    if(isNumber(arg1->getIDName())){
+                    if(isNumber(arg1_content))
+                    {
                         // std::cout<<"arg1 is a number: "<< atoi(arg1->getIDName().c_str())<<std::endl;
                         quad = new QuadItem(var, assign, atoi(arg1->getIDName().c_str()));
-                    }else {
+                    }
+                    else 
+                    {
                         quad = new QuadItem(var, assign, arg1);
                     }
                     this->quad_list.push_back(quad);

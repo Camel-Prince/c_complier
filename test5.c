@@ -1,7 +1,12 @@
 int main(){
-    int b[5];
-    b[2] = 4;
-    // int c = b[2];
+   int b[4];
+   int i=0;
+   for(i = 0; i<4; i = i+1){
+     b[i] = i*i;
+   }
+   int a = b[2];
+   a = b;
+  //  b = a;
 }
   
 

@@ -28,6 +28,7 @@ enum  OpType{
     JUMP_EQ,
     JUMP_NE,
     RETURN_OP,
+    // array_assign,
 
 };
 union Arg{

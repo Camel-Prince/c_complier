@@ -12,6 +12,41 @@ bool isNumber(std::string str){
     }
     return true;
 }
+QuadItem::QuadItem(int result, OpType op, int arg1, int arg2)
+{
+    this->op = op;
+    this->arg1.target = arg1;
+    this->arg2.target = arg2;
+    this->result.target = result;
+    this->quad_item_type = 0;
+}
+
+QuadItem::QuadItem(int result, OpType op, Symbol* arg1, int arg2)
+{
+    this->op = op;
+    this->arg1.var = arg1;
+    this->arg2.target = arg2;
+    this->result.target = result;
+    this->quad_item_type = 1;
+}
+
+QuadItem::QuadItem(int result, OpType op, int arg1, Symbol* arg2)
+{
+    this->op = op;
+    this->arg1.target = arg1;
+    this->arg2.var = arg2;
+    this->result.target = result;
+    this->quad_item_type = 2;
+}
+
+QuadItem::QuadItem(int result,OpType op, Symbol* arg1, Symbol* arg2)
+{
+    this->op = op;
+    this->arg1.var = arg1;
+    this->arg2.var = arg2;
+    this->result.target = result;
+    this->quad_item_type = 3;
+}
 
 QuadItem:: QuadItem(Symbol* result, OpType op, int arg1, int arg2){
    this->result.var = result;
@@ -50,9 +85,7 @@ QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1, Symbol* arg2){
 
 /***
  * 
- * 以下quad_item_type为4的为：
- * result为变量；
- * op为单目运算符；
+ * 
  * ***/
 QuadItem:: QuadItem(Symbol* result, OpType op, Symbol* arg1){
     this->result.var = result;
@@ -74,29 +107,23 @@ QuadItem::QuadItem(int result,OpType op)
     this->result.target = result;
     this->quad_item_type = 3;
 }
-QuadItem::QuadItem(int result,OpType op, Symbol* arg1, Symbol* arg2)
-{
-    this->op = op;
-    this->arg1.var = arg1;
-    this->arg2.var = arg2;
-    this->result.target = result;
-    this->quad_item_type = 3;
-}
+
 
 /**
  * 
  * 打印出一个四元式；根据op、arg1/2以及result的类型类确定输出格式；
  * 
 */
-void QuadItem:: printItemInfor(int i){
+void QuadItem:: printItemInfor(int i)
+{
     OpType op_type = this->op;
     int type = this->quad_item_type;
-    std::cout<<"Type: "<<type<<"  ";
+    // std::cout<<"Quad-Type: "<<type<<"  ";
     switch (op)
     {
     case addtion:
         if(type == 7){
-            std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -106,7 +133,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 6)
         {
-            std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -116,7 +143,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 5)
         {
-             std::cout<<"L"<<i+1<<":  "
+             std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -125,7 +152,7 @@ void QuadItem:: printItemInfor(int i){
             <<std::endl;
         }
         else if(type == 4){
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -137,7 +164,7 @@ void QuadItem:: printItemInfor(int i){
     case substract:
         if(type == 7)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -147,7 +174,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 6)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -157,7 +184,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 5)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -167,7 +194,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 4)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -179,7 +206,7 @@ void QuadItem:: printItemInfor(int i){
     case multiply:
         if(type == 7)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -189,7 +216,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 6)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -199,7 +226,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 5)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -209,7 +236,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 4)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -221,7 +248,7 @@ void QuadItem:: printItemInfor(int i){
     case divide:
         if(type == 7)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -231,7 +258,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 6)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -241,7 +268,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 5)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -251,7 +278,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 4)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -263,7 +290,7 @@ void QuadItem:: printItemInfor(int i){
     case mod:
         if(type == 7)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -273,7 +300,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 6)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -283,7 +310,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 5)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -293,7 +320,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 4)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -305,7 +332,7 @@ void QuadItem:: printItemInfor(int i){
     case power:
         if(type == 7)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -315,7 +342,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 6)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -325,7 +352,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 5)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.var->getIDName()
@@ -335,7 +362,7 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 4)
         {
-             std::cout<<"L"<<i+1<<":  "
+            std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -347,7 +374,7 @@ void QuadItem:: printItemInfor(int i){
     case assign:{
         if (type == 6)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName()
             <<" := "
             <<this->arg1.target
@@ -355,77 +382,299 @@ void QuadItem:: printItemInfor(int i){
         }
         else if(type == 7)
         {
-            std::cout<<"L"<<i+1<<":  "
+           std::cout<<"L"<<i<<":  "
             <<this->result.var->getIDName() <<" := "
             <<this->arg1.var->getIDName()<<std::endl;
         }
     }
     break;
     case JUMP_LT:
-        std::cout<<"L"<<i+1<<":  "<<"if "
-        <<this->arg1.var->getIDName()
-        <<" < "
-        <<this->arg2.var->getIDName()
-        <<" goto "
-        <<"L"
-        <<this->result.target+1
-        <<std::endl;
+        if(type == 3)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" < "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 2)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" < "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 1)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" < "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 0)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" < "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        
     break;
     case JUMP_LE:
-        std::cout<<"L"<<i+1<<":  "<<"if "
-        <<this->arg1.var->getIDName()
-        <<" <= "
-        <<this->arg2.var->getIDName()
-        <<" goto "
-        <<"L"
-        <<this->result.target+1
-        <<std::endl;
+         if(type == 3)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" <= "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 2)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" <= "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 1)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" <= "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 0)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" <= "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        
     break;
     case JUMP_GT:
-        std::cout<<"L"<<i+1<<":  "<<"if "
-        <<this->arg1.var->getIDName()
-        <<" > "
-        <<this->arg2.var->getIDName()
-        <<" goto "
-        <<"L"
-        <<this->result.target+1
-        <<std::endl;
+         if(type == 3)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" > "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 2)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" > "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 1)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" > "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 0)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" > "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        
     break;
     case JUMP_GE:
-        std::cout<<"L"<<i+1<<":  "<<"if "
-        <<this->arg1.var->getIDName()
-        <<" >= "
-        <<this->arg2.var->getIDName()
-        <<" goto "
-        <<"L"
-        <<this->result.target+1
-        <<std::endl;
+        if(type == 3)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" >= "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 2)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" >= "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 1)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" <>="
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 0)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" >= "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        
     break;
     case JUMP_EQ:
-        std::cout<<"L"<<i+1<<":  "<<"if "
-        <<this->arg1.var->getIDName()
-        <<" == "
-        <<this->arg2.var->getIDName()
-        <<" goto "
-        <<"L"
-        <<this->result.target+1
-        <<std::endl;
+         if(type == 3)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" == "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 2)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" == "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 1)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" == "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 0)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" == "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        
     break;
     case JUMP_NE:
-        std::cout<<"L"<<i+1<<":  "<<"if "
-        <<this->arg1.var->getIDName()
-        <<" != "
-        <<this->arg2.var->getIDName()
-        <<" goto "
-        <<"L"
-        <<this->result.target+1
-        <<std::endl;
+        if(type == 3)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" != "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 2)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" != "
+            <<this->arg2.var->getIDName()
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 1)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.var->getIDName()
+            <<" != "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        else if(type == 0)
+        {
+           std::cout<<"L"<<i<<":  "<<"if "
+            <<this->arg1.target
+            <<" != "
+            <<this->arg2.target
+            <<" goto "
+            <<"L"
+            <<this->result.target
+            <<std::endl;
+        }
+        
     break;
     case JUMP:
-        std::cout<<"L"<<i+1<<":  "
+       std::cout<<"L"<<i<<":  "
         <<" goto "
         <<"L"
-        <<this->result.target+1
+        <<this->result.target
         <<std::endl;
     break;
     
@@ -570,16 +819,18 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
         }
             break;
         case static_cast<int>(AstNodeType::OPERATION):{
-            if(node_content == "Parentheses"){
-                // node->getFirstChild()->printNodeInfo();
+            if(node_content == "Parentheses")
+            {
                 Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
                 return re;
-            }else if(node_content == "Addition" ||
+            }
+            else if(node_content == "Addition" ||
                 node_content == "Substraction" ||
                 node_content == "Multiply" || 
                 node_content == "Divide" || 
                 node_content == "Mod" || 
-                node_content == "Power"){
+                node_content == "Power")
+            {
                         // 注意，先generate完子节点， 再生成result的tempVar；
                 Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
                 Symbol* arg2 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table); 
@@ -611,11 +862,18 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 }
                 this->quad_list.push_back(quad);
                 return re;
-            } else if(node_content == "Assign"){
+            } 
+            else if(node_content == "Assign")
+            {
                 OpType op = assign;
                 Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
                 Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table);
-
+                // 进行类型检查；type的值是枚举类型symbolType决定的；
+                if(static_cast<int>(arg1->getSymbolType()) != static_cast<int>(re->getSymbolType()) ){
+                    std::cout<<"Cannot assign type"<<static_cast<int>(arg1->getSymbolType())<<" to type"
+                    <<static_cast<int>(re->getSymbolType())<<std::endl;
+                    exit(1);
+                }
                 QuadItem* quad;
                 if(isNumber(arg1->getIDName())){
                     std::cout<<arg1->getIDName()<<" is a number!!"<<std::endl;
@@ -627,12 +885,14 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 std::cout<<"quad_list Size: "<<quad_list.size()
                 <<"quad type: "<<quad->getItemType()<<std::endl;
                 return re;
-            } else if(node_content == "EQ_OP" ||
+            } 
+            else if(node_content == "EQ_OP" ||
                 node_content == "NE_OP" ||
                 node_content == "GT_OP" ||
                 node_content == "LT_OP" ||
                 node_content == "GE_OP" ||
-                node_content == "LE_OP" ){
+                node_content == "LE_OP" )
+            {
                 Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
                 Symbol* arg2 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table); 
                 OpType op;
@@ -650,19 +910,16 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                     op = JUMP_LE;
                 }
                 QuadItem* T;
-                if (isNumber(arg1->getIDName())||isNumber(arg2->getIDName())){
-                    if (isNumber(arg1->getIDName())) T=new QuadItem(int(NULL),op,atoi(arg1->getIDName().c_str()),arg2);
-                    if (isNumber(arg2->getIDName())) T=new QuadItem(int(NULL),op,arg1,atoi(arg2->getIDName().c_str()));
-                }else if (arg1 != NULL && arg2 != NULL){
-                    T = new QuadItem(int(NULL), op, arg1, arg2);
+                if (isNumber(arg1->getIDName())&& isNumber(arg2->getIDName())){
+                   T = new QuadItem(int(NULL), op, atoi(arg1->getIDName().c_str()), atoi(arg2->getIDName().c_str()) );
+                }else if (!isNumber(arg1->getIDName())&& isNumber(arg2->getIDName())){
+                   T = new QuadItem(int(NULL), op, arg1, atoi(arg2->getIDName().c_str()) );
+                }else if (isNumber(arg1->getIDName())&& !isNumber(arg2->getIDName())){
+                   T = new QuadItem(int(NULL), op, atoi(arg1->getIDName().c_str()), arg2 );
+                }else if (!isNumber(arg1->getIDName())&& !isNumber(arg2->getIDName())){
+                   T = new QuadItem(int(NULL), op, arg1, arg2);
                 }
-                if (arg1 != NULL && arg2 != NULL){
-                    QuadItem *T = new QuadItem(int(NULL),op,arg1,arg2);
-                }
-                else {
-                    std::cout<<"Error! Argument NULL exception in Compare_Expression"<<std::endl;
-                    exit(1);
-                }
+                
                 QuadItem *F = new QuadItem(int(NULL),OpType::JUMP);
                 std::list<int> trueL; 
                 int len = quad_list.size();
@@ -675,7 +932,9 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 trueList.push(trueL);
                 falseList.push(falseL);
 
-            }else if(node_content == "AND" || node_content == "OR" || node_content == "NOT"){
+            }
+            else if(node_content == "AND" || node_content == "OR" || node_content == "NOT")
+            {
                 if (node_content == "AND"){
                     AbstractAstNode *child = node->getFirstChild();
                     Exp_Stmt_Generate(child, symbol_table);
@@ -732,7 +991,23 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                     break;                   
                 }
             }
+            else if(node_content == "id[exp]")// a[i]
+            /***
+             * quads for b = a[i]      b is int && a is array(int)
+             * t1 = i*4
+             * t2 = a[t1]
+             * b = t2
+             * 
+             * **/
+            {
+                std::string array_name = node->getFirstChild()->content;
+                AbstractAstNode* index_exp_astNode = node->getFirstChild()->getNextSibling();
+                Symbol* index_symbol = Exp_Stmt_Generate(index_exp_astNode, symbol_table);
+                std::string index_content = index_symbol->getIDName();
+                // Symbol* re = new Symbol("t"+std::to_string(temp_list.size()), SymbolType::temp_var, 4);
+                // QuadItem* quad1 = new QuadItem(re, assign, )
                 
+            }
             
         }
             break;
@@ -799,9 +1074,7 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
             }
             else if(node_content == "If")
             {
-                std::cout<<"IF BEGIN GEN!!!!!!"<<std::endl;
                 Exp_Stmt_Generate(node->getFirstChild(), symbol_table); 
-                std::cout<<"IF_EXPRESSION GEN OK!!!!!!"<<std::endl;
                 AbstractAstNode* child = node->getFirstChild(); 
                 int start = quad_list.size();
                 std::list<int> JudgeTrue = trueList.top();
@@ -892,7 +1165,7 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                 backpatch(&JudgeFalse, end+1);
             }
             else if(node_content == "For_Def_SEMI_Exp_SEMI_Exp"){
-                std::cout<<"======FOR FROM HERE!=============="<<std::endl;
+                // std::cout<<"======FOR FROM HERE!=============="<<std::endl;
                 AbstractAstNode *child=node->getFirstChild();
                 AbstractAstNode *for_body=child->getNextSibling()->getNextSibling()->getNextSibling();                
                 SymbolTable *for_symbol_table = symbol_table->addChildTable(false);
@@ -945,16 +1218,21 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                     std::string var_name;
                     std::string const_value;
                     var_name = child->getFirstChild()->getFirstChild()->content;
+                    Symbol* dup_check = symbol_table->findSymbolLocally(var_name);
+                    if(dup_check!= NULL && static_cast<int>(dup_check->getSymbolType()) == 2 )
+                    {
+                        std::cout<<"Error! Duplicate defination for Variable_name "<<var_name<<std::endl;
+                        exit(1);
+                    }
                     const_value = child->getFirstChild()->getNextSibling()->getFirstChild()->content;
                     Symbol* var = new Symbol(var_name, SymbolType:: var, 4, const_value);
-                    var->setSymOffset(symbol_table->getOffset()+var->getWidth());
                     symbol_table->setOffset(symbol_table->getOffset()+var->getWidth()); 
                     var->setSymOffset(symbol_table->getOffset());
                     symbol_table->addSymbol(var);
                     Symbol* arg1 = new Symbol(const_value);
                     QuadItem* quad;
                     if(isNumber(arg1->getIDName())){
-                        std::cout<<"arg1 is a number: "<< atoi(arg1->getIDName().c_str())<<std::endl;
+                        // std::cout<<"arg1 is a number: "<< atoi(arg1->getIDName().c_str())<<std::endl;
                         quad = new QuadItem(var, assign, atoi(arg1->getIDName().c_str()));
                     }else {
                         quad = new QuadItem(var, assign, arg1);
@@ -962,8 +1240,15 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                     this->quad_list.push_back(quad);
                 }
                 else if(child->content == "Var_ONLY"){
-                    if(child->getFirstChild()->content == "array_id[const]"){
+                    if(child->getFirstChild()->content == "array_id[const]")
+                    {
                         std::string var_name = child->getFirstChild()->getFirstChild()->content;
+                        Symbol* dup_check = symbol_table->findSymbolLocally(var_name);
+                        if(dup_check != NULL && static_cast<int>(dup_check->getSymbolType()) == 5)
+                        {
+                            std::cout<<"Error! Duplicate defination for Array_name "<<var_name<<std::endl;
+                            exit(1);
+                        }
                         std::string size_str = child->getFirstChild()->getFirstChild()->getNextSibling()->content;
                         int size = atoi(size_str.c_str());
                         Symbol* var = new Symbol(var_name, SymbolType::array, size*4);
@@ -971,9 +1256,16 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                         var->setSymOffset(symbol_table->getOffset());
                         symbol_table->addSymbol(var);
                         // std::cout<<"Add Symbol "<<var_name<<" into SymbolTable!"<<std::endl;
-                    }else{
+                    }
+                    else{
                         std::string var_name;
                         var_name = child->getFirstChild()->getFirstChild()->content;
+                        Symbol* dup_check = symbol_table->findSymbolLocally(var_name);
+                        if(dup_check!= NULL && static_cast<int>(dup_check->getSymbolType()) == 2 )
+                        {
+                            std::cout<<"Error! Duplicate defination for Variable_name "<<var_name<<std::endl;
+                            exit(1);
+                        }
                         Symbol* var = new Symbol(var_name, SymbolType:: var, 4);
                         symbol_table->setOffset(symbol_table->getOffset()+var->getWidth()); 
                         var->setSymOffset(symbol_table->getOffset());
@@ -984,16 +1276,13 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
                 }
                 if(node_content == "Def_Some_Var"){
                     AbstractAstNode* child = node->getFirstChild()->getNextSibling();
-                    while(child != NULL){
                         Body_Generate(child, symbol_table);
-                        child = child->getFirstChild()->getNextSibling();
-                    }
                 }
             }
         }
         break;
         case static_cast<int>(AstNodeType:: OPERATION):{
-            std::cout<<"+++++++++Here!!!!++++++++++++"<<std::endl; 
+            // std::cout<<"+++++++++Here!!!!++++++++++++"<<std::endl; 
             Exp_Stmt_Generate(node,symbol_table);
         }
         break;
@@ -1006,8 +1295,7 @@ SymbolTable* InterCode:: Body_Generate(AbstractAstNode* node, SymbolTable* symbo
 }
 
 
-//content of 3 function for 3backpatch
-//I dont know where to use the first 2
+// 3 function for 3backpatch
 std::list<int> *InterCode::makelist(int index)
 {
     std::list<int> *jumpList = new std::list<int>();

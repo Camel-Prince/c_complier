@@ -1,11 +1,7 @@
-
 int main(){
-  int b;
-  b = b+1; 
-  int a;
-  a = 3+4;
-  
-
+    int b[5];
+    b[2] = 4;
+    // int c = b[2];
 }
   
 

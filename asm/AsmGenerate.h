@@ -83,11 +83,11 @@ private:
     void releaseRegister(asmRegister reg);
     asmRegister getRegister(std::string var);
     asmRegister findRegister(std::string var);
-    //void generateDefFunction(QuadItem q);
+    void generateDefFunction(QuadItem q);
     void generateReturn(QuadItem q);
-    //void generateEndFunction(QuadItem q);
-    //void generateCallFunction(QuadItem q);
-    //void generateCallBuildInFunction(QuadItem q, QuadItem arg);
+    void generateEndFunction(QuadItem q);
+    void generateCallFunction(QuadItem q);
+    void generateCallBuildInFunction(QuadItem q, QuadItem arg);
     void generateSetArg(QuadItem q);
     void generateArithmetic(QuadItem q);
     void generateJump(QuadItem q);
@@ -106,7 +106,7 @@ public:
     AsmGenerate(std::vector<QuadItem*>quads, SymbolTable* rootTable);
     void generate();
     void printbuffer(){
-        std::cout<<"---asm start--\nbuffer!!:"<<this->asmcode.getcodeBuffer();
+        std::cout<<"buffer:"<<this->asmcode.getcodeBuffer()<<"\n\n";
     }
 };
 

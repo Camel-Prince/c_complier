@@ -1,9 +1,44 @@
 #include "AsmGenerate.h"
+#include"string.h"
+#include<string>
 
 AsmCode::AsmCode() {
 
 }
+//get 2 value back:1.name 2.offset
+Symbol* AsmGenerate::getoffsetofarray(Symbol* arg)
+{
+    Symbol *result;
+    string result_name=arg->getIDName();
+    char *splited_result=strtok((char*)result_name.c_str(), "[");
+    
+    string firstname=splited_result;
+    Symbol* re = this->currentTable->findSymbolLocally(firstname);
+    if(re == NULL){
+        re = this->currentTable->findSymbolGlobally(firstname);
+    }
+    int base_offset =re->getSymOffset()-re->getWidth();
+    int total_offset=base_offset;
+    //result.push_back(firstname);
+    //std::cout<<"splited "<<splited_result<<"\n";
+    splited_result=strtok(NULL," ");
+    //std::cout<<"splited "<<splited_result<<"\n";
+    int numberi=atoi(splited_result);
+    //get i from reg
+    // b[0]
+    total_offset+=numberi*4;
+    result=new Symbol(firstname,SymbolType::var);
+    result->setSymOffset(total_offset);
+    return result;
 
+   
+
+
+
+
+
+
+}
 std::string AsmCode::transRegister(asmRegister reg) {
     if (reg == asmRegister::eax) return ASM_EAX;
     else if (reg == asmRegister::ebx) return ASM_EBX;
@@ -178,13 +213,6 @@ AsmGenerate::AsmGenerate(std::vector<QuadItem*> quadlist, SymbolTable* roottable
     this->quad_list = quadlist;
     //this->tempVar = tempVar;
     this->rootTable = roottable;
-     std::cout<<"begin--initializeasm:--\n";
-    for(size_t i=0;i<quad_list.size();i++)
-    {
-        std::cout<<"quad_list["<<i<<"]=";
-        quad_list[i]->printItemInfor(i);
-    }
-    std::cout<<"end--initializeasm:--\n";
     //this->funcTable = funcTable;
     this->preSetLabel();
    
@@ -230,14 +258,28 @@ asmRegister AsmGenerate::findRegister(std::string var) {
 }
 
 void AsmGenerate::generateArithmetic(QuadItem q) {
+    //std::cout<<q.getArg(1).var->getIDName();
+    // if(q.getArg(1).var->getIDName()[0]=='&')
+    // {
+    //     std::cout<<"fffffffffff\n";
+    // return;
+    // }
+
     std::string instructor;
     OpType optype = q.getOpType();
     int flag = q.getItemType();
-    // Special case, assign operate is unary operator.
+    //get the name of result,if it is like b[0]
+    int offset;
     if (optype==OpType::assign) 
     {
         Symbol* result = q.getArg(3).var;
-        int offset = result->getSymOffset();
+        string result_name=result->getIDName();
+        if (result_name.find("[")<result_name.size())
+        {
+            result=getoffsetofarray(result);
+        }
+
+        offset = result->getSymOffset();
         std::string result_ebp_offset = this->asmcode.generateVar(offset);
         if (flag == 7) 
         {
@@ -875,43 +917,7 @@ void AsmGenerate::generateGetAddress(QuadItem q) {
     }
 }
 
-void AsmGenerate::generateAssignMember(QuadItem q) {
-    int offsetOfMember = std::atoi(q.getArg(2).var->getIDName().c_str());
-    std::string structIdName = q.getArg(3).var->getIDName();
-    int offsetOfStruct = currentTable->findSymbolGlobally(structIdName)->getSymOffset();
-    int totalOffset = offsetOfMember + offsetOfStruct;
-    this->asmcode.mov(asmRegister::edx, asmRegister::ebp);
-    this->asmcode.sub(asmRegister::edx, std::to_string(totalOffset));
-    int flag = q.getItemType();
-    if (flag == 7) {
-        std::string tempValue = q.getArg(1).var->getIDName();
-        asmRegister reg;
-        if (tempValue[0] == 't') {
-            reg = this->findRegister(tempValue);
-            this->releaseRegister(reg);
-        } else {
-            int offsetOfValue = q.getArg(1).var->getSymOffset();
-            reg = this->getRegister("!MOV");
-            this->releaseRegister(reg);
-            this->asmcode.mov(reg, this->asmcode.generateVar(offsetOfValue));
-        }
-        this->asmcode.mov(this->asmcode.findValueByAddress(asmRegister::edx), reg);
-    } else if (flag == 6) {
-        int tempValue = q.getArg(1).target;
-        this->asmcode.mov(this->asmcode.findValueByAddress(asmRegister::edx), this->asmcode.generateInstanceNumber(tempValue));
-    }
-}
 
-void AsmGenerate::generateGetMember(QuadItem q) {
-    std::string tempResult = q.getArg(3).var->getIDName();
-    std::string structIdName = q.getArg(1).var->getIDName();
-    int offsetOfMember = std::atoi(q.getArg(2).var->getIDName().c_str());
-    int offsetOfStruct = currentTable->findSymbolGlobally(structIdName)->getSymOffset();
-    asmRegister tempReg = this->getRegister(tempResult);
-    int totalOffset = offsetOfMember + offsetOfStruct;
-    std::string memberEbpOffset = this->asmcode.generateVar(totalOffset);
-    this->asmcode.mov(tempReg, memberEbpOffset);
-}
 
 /*void AsmGenerate::generateGetArrayValue(QuadItem& q) {
     std::string resultName = q.getArg(3).var->getIDName();
@@ -1053,7 +1059,6 @@ void AsmGenerate::preSetLabel()
     size_t i=0;
     for (; i < quad_list.size(); i++) {
         if (labelMap.count(i) > 0) {
-            std::cout<<"numver"<<i<<":="<<labelMap[i]<<"\n";
             QuadItem *q=new QuadItem((Symbol*)NULL,OpType::label ,labelMap[i],(Symbol*)NULL);
             quad.push_back(q);
         }
@@ -1071,10 +1076,11 @@ bool AsmGenerate::isJumpQuad(OpType optype) {
 
 void AsmGenerate::generate()
 {
-    currentTable = rootTable;
+    currentTable = rootTable->getfirstChildTable();
+    // currentTable->showSymbols();
     // Set header info
+    std::cout<<"begin _asm\n";
     this->asmcode.addCode("\%include \"asm/aso_io.inc\"\n section .text\nglobal main\nmain:\npush ebx\nmov ebp,esp\n");
-    std::cout<<"asm__begin\n";
     for (size_t i = 0; i < this->quad_list.size(); i++) 
     {
         QuadItem *q = quad_list[i];
@@ -1087,33 +1093,12 @@ void AsmGenerate::generate()
 
         
 
-        /*if (optype==OpType::FUNC_DEF) {
-            if (currentTable == rootTable) {
-                currentTable = currentTable->getfirstChildTable();
-            } else {
-                currentTable = currentTable->getNextSiblingTable();
-            }
-            this->generateDefFunction(q);
-        }
-        else*/ 
+      
         if (optype==OpType::addtion || optype==OpType::substract ||
                  optype==OpType::divide || optype==OpType::multiply ||
                  optype==OpType::assign || optype==OpType::mod) {
             this->generateArithmetic(*q);
         }
-        /*else if (optype==OpType::PARAM) {
-            QuadItem& next = quad_list[i + 1];
-            if (next.getOpType() == OpType::CALL) {
-                if (next.getArg(1).var->getIDName() == "print_int_i" || 
-                    next.getArg(1).var->getIDName() == "read_int_i") {
-                        this->generateCallBuildInFunction(next, q);
-                        i = i + 1;
-                        continue;
-                    }
-            }
-            // Push the args to stack
-            this->generateSetArg(q);
-        }*/
         /*else if (optype==OpType::CALL) {
             this->generateCallFunction(q);
         } else if (optype==OpType::END_FUNCTION) {
@@ -1132,11 +1117,7 @@ void AsmGenerate::generate()
             this->generateNeg(*q);
         }/* else if (optype==OpType::GET_ADDRESS) {
             this->generateGetAddress(q);
-        } else if (optype==OpType::ASSIGN_STRUCT) {
-            this->generateAssignMember(q);
-        } else if (optype==OpType::GET_STRUCT) {
-            this->generateGetMember(q);
-        } else if (optype==OpType::ASSIGN_ARRAY || optype==OpType::ASSIGN_POINTER) {
+        }else if (optype==OpType::ASSIGN_ARRAY || optype==OpType::ASSIGN_POINTER) {
             this->generateAssignArray(q);
         } else if (optype==OpType::GET_ARRAY || optype==OpType::GET_VALUE) {
             this->generateGetArrayValue(q);

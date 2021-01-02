@@ -529,24 +529,612 @@ main:
 push ebx
 mov ebp,esp
 
-
-mov [ebp-4],dword 1
-mov [ebp-8],dword 3
-mov [ebp-12],dword 2
-mov [ebp-16],dword 4
-xor edx,edx
-mov eax,[ebp-4]
-mul dword[ebp-12]
-mov ebx,eax
-xor edx,edx
-mov eax,[ebp-8]
-mul dword[ebp-16]
-mov ecx,eax
-add ebx,ecx
-mov [ebp-4],ebx
-mov eax,[ebp-4]
+mov [ebp-16],dword 1
+mov eax,[ebp-16]
+call print_int_i
 pop ebx
 ret
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+mov edx,[ebp-4]
+mov [ebp-4],edx
+mov edx,[ebp-4]
+mov [ebp-8],edx
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+mov [ebp-8],dword 3
+xor ebx,ebx
+mov ebx,dword[ebp-4]
+add ebx,dword 1
+mov [ebp-4],ebx
+cmp [ebp-4],dword 3
+jg label0
+jmp label1
+
+label0:
+cmp [ebp-8],dword 1
+jl label2
+jmp label1
+
+label2:
+xor edx,edx
+mov eax,dword[ebp-4]
+mov ebx,dword 3
+mul ebx
+mov ebx,eax
+sub ebx,dword 4
+mov [ebp-4],ebx
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label4:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-4]
+mov ebx,eax
+mov [ebp-4],ebx
+cmp [ebp-4],dword 50
+jge label2
+jmp label3
+
+label2:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+
+label3:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label4
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label4:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-4]
+mov ebx,eax
+mov [ebp-4],ebx
+cmp [ebp-4],dword 50
+jg label2
+jmp label3
+
+label2:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+
+label3:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label4
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label4:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-4]
+mov ebx,eax
+mov [ebp-4],ebx
+cmp [ebp-4],dword 50
+jl label2
+jmp label3
+
+label2:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+
+label3:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label4
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label4:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-4]
+mov ebx,eax
+mov [ebp-4],ebx
+cmp [ebp-4],dword 50
+jle label2
+jmp label3
+
+label2:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+
+label3:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label4
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label4:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-4]
+mov ebx,eax
+mov [ebp-4],ebx
+cmp [ebp-4],dword 50
+jge label2
+jmp label3
+
+label2:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+
+label3:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label4
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label4:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-4]
+mov ebx,eax
+mov [ebp-4],ebx
+cmp [ebp-4],dword 50
+jge label2
+jmp label3
+
+label2:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+
+label3:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label4
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label4:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-4]
+mov ebx,eax
+mov [ebp-4],ebx
+mov [ebp-4],dword 444
+cmp [ebp-4],dword 50
+jge label2
+jmp label3
+
+label2:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+
+label3:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label4
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label4:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-4]
+mov ebx,eax
+mov [ebp-4],ebx
+cmp [ebp-4],dword 50
+jge label2
+jmp label3
+
+label2:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+
+label3:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label4
+
+label1:
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label4:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-4]
+mov ebx,eax
+mov [ebp-4],ebx
+cmp [ebp-4],dword 50
+jge label2
+jmp label3
+
+label2:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+
+label3:
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label4
+
+label1:
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 10
+mov [ebp-12],dword 0
+
+label2:
+mov edx,[ebp-12]
+cmp edx,[ebp-8]
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-4]
+add ebx,dword 4
+mov [ebp-4],ebx
+xor ebx,ebx
+mov ebx,dword[ebp-12]
+add ebx,dword 1
+mov [ebp-12],ebx
+jmp label2
+
+label1:
+%include "asm/aso_io.inc"
+ section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 0
+
+label2:
+cmp [ebp-8],dword 10
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-4]
+add ebx,dword 4
+mov [ebp-4],ebx
+xor ebx,ebx
+mov ebx,dword[ebp-8]
+add ebx,dword 1
+mov [ebp-8],ebx
+jmp label2
+
+label1:
 %include "asm/aso_io.inc"
  section .text
 global main
@@ -558,15 +1146,17 @@ mov [ebp-4],dword 0
 
 label2:
 cmp [ebp-4],dword 10
-jg label0
+jl label0
 jmp label1
 
 label0:
 xor ebx,ebx
 mov ebx,dword[ebp-4]
-add ebx,dword 1
+add ebx,dword 4
 mov [ebp-4],ebx
 jmp label2
+
+label1:
 %include "asm/aso_io.inc"
  section .text
 global main
@@ -575,317 +1165,18 @@ push ebx
 mov ebp,esp
 
 mov [ebp-4],dword 0
-mov edx,[ebp-20]
-mov [ebp-4],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp-4],dword 0
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp-4],dword 0
-mov edx,[ebp-20]
-mov [ebp-4],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp-4],dword 0
-mov edx,[ebp-20]
-mov [ebp-4],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp-4],dword 0
-mov edx,[ebp-20]
-mov [ebp-4],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp-1936933132],dword 4
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp+0],dword 4
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp+0],
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp+0],dword 10
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp+0],dword 10
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp+0],dword 3
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp+0],dword 3
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-xor edx,edx
-mov eax,dword 2
-mov ebx,dword 2
-mul ebx
-mov ebx,eax
-mov [ebp+0],dword 3
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-xor edx,edx
-mov eax,dword 2
-mov ebx,dword 2
-mul ebx
-mov ebx,eax
-mov [ebp+0],dword 3
-mov edx,[ebp+0]
-mov [ebp+0],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-xor edx,edx
-mov eax,dword 2
-mov ebx,dword 2
-mul ebx
-mov ebx,eax
-mov [ebp+0],dword 3
-mov edx,[ebp+0]
-mov [ebp-20],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-xor edx,edx
-mov eax,dword 2
-mov ebx,dword 2
-mul ebx
-mov ebx,eax
-mov [ebp+0],dword 3
-mov edx,[ebp+0]
-mov [ebp-20],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-xor edx,edx
-mov eax,dword 2
-mov ebx,dword 2
-mul ebx
-mov ebx,eax
-mov [ebp+0],dword 3
-mov edx,[ebp+0]
-mov [ebp-20],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-xor edx,edx
-mov eax,dword 2
-mov ebx,dword 2
-mul ebx
-mov ebx,eax
-mov [ebp+0],dword 3
-mov edx,[ebp+0]
-mov [ebp-20],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov edx,[ebp+0]
-mov [ebp-4],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov edx,[ebp-1869365798]
-mov [ebp-4],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-xor edx,edx
-mov eax,dword 4
-mov ebx,dword 4
-mul ebx
-mov ebx,eax
-mov [ebp-4],ebx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov edx,[ebp+0]
-mov [ebp-4],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov edx,[ebp+0]
-mov [ebp-20],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp-20],dword 0
 
 label2:
-cmp [ebp-20],dword 4
+cmp [ebp-4],dword 10
 jl label0
 jmp label1
 
 label0:
-xor edx,edx
-mov eax,[ebp-20]
-mul dword[ebp-20]
-mov ebx,eax
-mov [ebp+0],ebx
+mov [ebp-4],dword 9
 xor ebx,ebx
-mov ebx,dword[ebp-20]
-add ebx,dword 1
-mov [ebp-20],ebx
+mov ebx,dword[ebp-4]
+add ebx,dword 4
+mov [ebp-4],ebx
 jmp label2
 
 label1:
-mov edx,[ebp+0]
-mov [ebp-24],edx
-%include "asm/aso_io.inc"
- section .text
-global main
-main:
-push ebx
-mov ebp,esp
-
-mov [ebp-20],dword 0
-
-label2:
-cmp [ebp-20],dword 4
-jl label0
-jmp label1
-
-label0:
-xor edx,edx
-mov eax,[ebp-20]
-mul dword[ebp-20]
-mov ebx,eax
-mov [ebp+0],ebx
-xor ebx,ebx
-mov ebx,dword[ebp-20]
-add ebx,dword 1
-mov [ebp-20],ebx
-jmp label2
-
-label1:
-mov edx,[ebp+0]
-mov [ebp-24],edx
-mov edx,[ebp-16]
-mov [ebp-24],edx

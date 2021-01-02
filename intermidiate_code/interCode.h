@@ -28,6 +28,8 @@ enum  OpType{
     JUMP_EQ,
     JUMP_NE,
     RETURN_OP,
+    PRINT,
+    SCAN,
     // array_assign,
 
 };
@@ -56,6 +58,7 @@ public:
     QuadItem(int result, OpType op, int arg1, int arg2);
     QuadItem(int result,OpType op, Symbol* arg1, Symbol* arg2);    
     QuadItem(int result, OpType op, int arg1);
+    QuadItem(Symbol* result, OpType op);
     void printItemInfor(int i);
     
     //functions for backpatch

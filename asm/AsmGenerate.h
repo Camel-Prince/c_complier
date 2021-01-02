@@ -101,6 +101,7 @@ private:
     void preSetLabel();
     bool isJumpQuad(OpType code);
 public:
+    Symbol* getoffsetofarray(Symbol* arg);
     inline AsmCode& getAsmCode() { return this->asmcode; }
     //AsmGenerate(std::vector<QuadItem*>quads, std::vector<Symbol*> tempVar, SymbolTable* rootTable, FuncTable funcTable);
     AsmGenerate(std::vector<QuadItem*>quads, SymbolTable* rootTable);

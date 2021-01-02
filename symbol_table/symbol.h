@@ -7,10 +7,10 @@
 # include "../abstract_syntax_tree/AstNode.h"
 enum class SymbolType {
     integer = 1,
-    var,
-    temp_var,
-    pointer,
-    array,
+    var = 2,
+    temp_var = 3,
+    pointer = 4,
+    array = 5,
     boolean,
     Void,
     function_name,

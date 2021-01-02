@@ -1,11 +1,29 @@
 int main(){
-   int b[4];
-   int i=0;
-   for(i = 0; i<4; i = i+1){
-     b[i] = i*i;
-   }
-   int a = b[2];
-   a = b;
+  // int a = 0;
+ 
+  // pointer
+  // int b = 0;
+  // int * a = &b;
+  // int c;
+  // c = *a;
+// if
+int a = 0;
+while (a < 10)
+{
+  int a = 9;
+  a = a+4;
+}
+print_int(a);
+
+
+
+  // array 
+  // int b[9];
+  // b[0] = 1;
+  // int a;
+  // a = b[0];
+  // a = &b;
+  // a = b;
   //  b = a;
 }
   

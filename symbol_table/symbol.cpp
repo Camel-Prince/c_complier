@@ -74,7 +74,7 @@ Symbol* SymbolTable:: findSymbolGlobally(std::string name){
             temp = temp->parentTable;
         }else return result;
     }
-    std::cout<<"Error: "<<"id "<<name<<" is not defined"<<std::endl;
+    std::cout<<"\033[31m Error: Undefined ID: \033[0m"<<name<<std::endl;
     exit(1);
     return NULL;
 }

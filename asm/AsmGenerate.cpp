@@ -283,14 +283,19 @@ void AsmGenerate::generateArithmetic(QuadItem q) {
         std::string result_ebp_offset = this->asmcode.generateVar(offset);
         if (flag == 7) 
         {
-            std::string tempVar = q.getArg(1).var->getIDName();
+            Symbol* arg1=q.getArg(1).var;
+            std::string tempVar = arg1->getIDName();
+            if (tempVar.find("[")<tempVar.size())
+        {
+            arg1=getoffsetofarray(arg1);
+        }
             if (tempVar[0] == 't') 
             {
                 asmRegister tempVarReg = this->findRegister(tempVar);
                 this->asmcode.mov(result_ebp_offset, tempVarReg);
                 this->releaseRegister(tempVarReg);
             } else {
-                int varOffset = q.getArg(1).var->getSymOffset();
+                int varOffset = arg1->getSymOffset();
                 std::string varEbpOffset = this->asmcode.generateVar(varOffset);
                 this->asmcode.mov(asmRegister::edx, varEbpOffset);
                 this->asmcode.mov(result_ebp_offset, asmRegister::edx);

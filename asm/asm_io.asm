@@ -1439,3 +1439,121 @@ mov [ebp-24],edx
 mov ebx,[ebp-20]
 add ebx,[ebp-24]
 mov [ebp-20],ebx
+section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 1
+mov [ebp-8],dword 2
+mov ebx,[ebp-4]
+add ebx,[ebp-8]
+mov [ebp-4],ebx
+mov eax,[ebp-4]
+
+call print_int_i
+
+mov eax,[ebp-8]
+
+call print_int_i
+
+pop ebx
+ret
+
+section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+mov [ebp-8],dword 1
+
+label2:
+cmp [ebp-4],dword 10
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-4]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-8]
+mov ebx,eax
+mov [ebp-8],ebx
+xor ebx,ebx
+mov ebx,dword[ebp-4]
+add ebx,dword 1
+mov [ebp-4],ebx
+jmp label2
+
+label1:
+mov eax,[ebp-8]
+
+call print_int_i
+
+pop ebx
+ret
+
+section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 0
+mov [ebp-8],dword 1
+
+label4:
+cmp [ebp-4],dword 10
+jl label0
+jmp label1
+
+label0:
+xor ebx,ebx
+mov ebx,dword[ebp-4]
+add ebx,dword 1
+mov [ebp-4],ebx
+xor ebx,ebx
+mov ebx,dword[ebp-4]
+add ebx,dword 1
+xor edx,edx
+mov eax,ebx
+mul dword[ebp-8]
+mov ebx,eax
+mov [ebp-8],ebx
+cmp [ebp-8],dword 20
+jg label2
+jmp label3
+
+label2:
+mov eax,[ebp-8]
+
+call print_int_i
+
+
+label3:
+jmp label4
+pop ebx
+ret
+
+section .text
+global main
+main:
+push ebx
+mov ebp,esp
+
+mov [ebp-4],dword 9
+mov edx,[ebp-4]
+mov [ebp-4],edx
+mov [ebp-4],dword 100
+mov eax,[ebp-4]
+
+call print_int_i
+
+pop ebx
+ret
+

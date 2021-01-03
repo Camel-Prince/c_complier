@@ -23,6 +23,7 @@ private:
     int width;
     int sym_offset;
     std::string value;
+    bool isUsed;
 public:
     Symbol();
     Symbol(std::string name, SymbolType type = SymbolType::var, int width = 4, std::string init_value = "0");
@@ -38,8 +39,12 @@ public:
                  <<"\tSymbol vale: "<<this->value
                  <<"\tSymbol offset: "<<this->sym_offset
                  <<"\twitdth: "<<this->width
-                 <<"\tSymbol Type: "<<static_cast<int>(this->idType)<<std::endl;
+                 <<"\tSymbol Type: "<<static_cast<int>(this->idType)
+                 <<"\tisUsed: "<<this->isUsed
+                 <<std::endl;
     }
+    inline void setIsUsed(){this->isUsed = true;}
+    inline bool getIsUsed(){return this->isUsed ;}
 };
 
 

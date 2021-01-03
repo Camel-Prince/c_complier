@@ -83,23 +83,14 @@ private:
     void releaseRegister(asmRegister reg);
     asmRegister getRegister(std::string var);
     asmRegister findRegister(std::string var);
-    void generateDefFunction(QuadItem q);
-    void generateReturn(QuadItem q);
-    void generateEndFunction(QuadItem q);
-    void generateCallFunction(QuadItem q);
-    void generateCallBuildInFunction(QuadItem q, QuadItem arg);
     void generateSetArg(QuadItem q);
     void generateArithmetic(QuadItem q);
     void generateJump(QuadItem q);
     void generateNeg(QuadItem q);
     void generatePower(QuadItem q);
-    void generateGetAddress(QuadItem q);
-    void generateGetMember(QuadItem q);
-    void generateGetArrayValue(QuadItem q);
-    void generateAssignMember(QuadItem q);
-    void generateAssignArray(QuadItem q);
     void preSetLabel();
     bool isJumpQuad(OpType code);
+    void generateprint(QuadItem q);
 public:
     Symbol* getoffsetofarray(Symbol* arg);
     inline AsmCode& getAsmCode() { return this->asmcode; }

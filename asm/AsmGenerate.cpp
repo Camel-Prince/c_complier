@@ -609,98 +609,10 @@ void AsmGenerate::generateArithmetic(QuadItem q) {
     }
 }
 
-void AsmGenerate::generateDefFunction(QuadItem q) {
-    std::string funcName = q.getArg(1).var->getIDName();
-    this->asmcode.label(funcName);
-    int totalOffset = currentTable->getOffset();
-    this->asmcode.addCode(ASM_ENTER + std::string(" ") + std::to_string(totalOffset) + ASM_COMMA + "0");
-    this->asmcode.push(asmRegister::ebx);
-    this->asmcode.push(asmRegister::ecx);
-}
 
-void AsmGenerate::generateReturn(QuadItem q) {
-    if (q.getArg(1).target == 0) {
-        this->generateEndFunction(q);
-        return;
-    }
-    int flag = q.getItemType();
-    if (flag == 7) {
-        Symbol* s = q.getArg(1).var;
-        std::string name = s->getIDName();
-        if (name[0] == 't') {
-            asmRegister reg = this->findRegister(name);
-            this->releaseRegister(reg);
-            this->asmcode.mov(asmRegister::eax, reg);
-        } else {
-            int offset = s->getSymOffset();
-            std::string varEbpOffset = this->asmcode.generateVar(offset);
-            this->asmcode.mov(asmRegister::eax, varEbpOffset);
-        }
-    } else {
-        int value = q.getArg(1).target;
-        this->asmcode.mov(asmRegister::eax, std::to_string(value));
-    }
-    this->asmcode.addCode(ASM_LEAVE);
-    this->asmcode.addCode(ASM_RET);
-}
 
-void AsmGenerate::generateEndFunction(QuadItem q) {
-    this->asmcode.pop(asmRegister::ecx);
-    this->asmcode.pop(asmRegister::ebx);
-    this->asmcode.addCode(ASM_LEAVE);
-    this->asmcode.addCode(ASM_RET);
-}
 
-void AsmGenerate::generateCallBuildInFunction(QuadItem q, QuadItem arg) {
-    std::string funcName = q.getArg(1).var->getIDName();
-    int tempVar = 0;
-    int varOffSet = 0;
-    if (arg.getItemType() == 6) {
-        int argValue = arg.getArg(1).target;
-        std::string value = std::to_string(argValue);
-        if (funcName == "print_int_i") {
-            this->asmcode.mov(asmRegister::eax, value);
-            this->generateCallFunction(q);
-        }
-    }
-    else {
-        std::string argNam = arg.getArg(1).var->getIDName();
-        asmRegister tempVarReg = asmRegister::unset;
-        if (argNam[0] == 't') {
-            tempVarReg = this->findRegister(argNam);
-        } else {
-            Symbol* s = arg.getArg(1).var;
-            varOffSet = s->getSymOffset();
-        }
-        if (funcName == "print_int_i") {
-            if (tempVarReg != asmRegister::unset) {
-                this->asmcode.mov(asmRegister::eax, tempVarReg);
-            } else {
-                std::string varEbpOffset = this->asmcode.generateVar(varOffSet);
-                this->asmcode.mov(asmRegister::eax, varEbpOffset);
-            }
-            this->generateCallFunction(q);
-        } else if (funcName == "read_int_i") {
-            this->generateCallFunction(q);
-            std::string varEbpOffset = this->asmcode.generateVar(varOffSet);
-            this->asmcode.mov(varEbpOffset, asmRegister::eax);
-        }
-    }
-}
-//not use
-void AsmGenerate::generateCallFunction(QuadItem q) {
-    std::string funcName = q.getArg(1).var->getIDName();
-    this->asmcode.generateUnaryInstructor(ASM_CALL, funcName);
-    if (q.getArg(3).var != NULL) {
-        std::string tempVar = q.getArg(3).var->getIDName();
-        asmRegister tempReg = this->getRegister(tempVar);
-        this->asmcode.mov(tempReg, asmRegister::eax);
-    }
-    // Protect the esp
-    //FuncSymbol* func = funcTable.findFunction(funcName);
-    //int offset = func->getTotalArgOffset();
-    //if (offset != 0) this->asmcode.add(asmRegister::esp, std::to_string(offset));
-}
+
 
 void AsmGenerate::generateSetArg(QuadItem q) {
     int flag = q.getItemType();
@@ -903,20 +815,15 @@ void AsmGenerate::generatePower(QuadItem q) {
     this->asmcode.add(asmRegister::esp, "8");
 }
 
-void AsmGenerate::generateGetAddress(QuadItem q) {
-    int offset = q.getArg(1).var->getSymOffset();
-    std::string resultName = q.getArg(3).var->getIDName();
-    if (resultName[0] == 't') {
-        asmRegister resultReg = this->getRegister(resultName);
-        this->asmcode.mov(resultReg, asmRegister::ebp);
-        this->asmcode.sub(resultReg, std::to_string(offset));
-    } else {
-        std::string resultEbpOffset = this->asmcode.generateVar(q.getArg(3).var->getSymOffset());
-        this->asmcode.mov(resultEbpOffset, asmRegister::ebp);
-        this->asmcode.generateBinaryInstructor(ASM_ADD, resultEbpOffset, std::to_string(offset));
-    }
-}
 
+void AsmGenerate::generateprint(QuadItem q)
+{
+    Symbol* result = q.getArg(3).var;
+    int offset = result->getSymOffset();
+    std::string result_ebp_offset = this->asmcode.generateVar(offset);
+    this->asmcode.addCode("mov eax,"+result_ebp_offset+"\n");
+    this->asmcode.addCode("call print_int_i\n");
+}
 
 
 /*void AsmGenerate::generateGetArrayValue(QuadItem& q) {
@@ -1077,10 +984,11 @@ bool AsmGenerate::isJumpQuad(OpType optype) {
 void AsmGenerate::generate()
 {
     currentTable = rootTable->getfirstChildTable();
-    // currentTable->showSymbols();
+    currentTable->showSymbols();
     // Set header info
     std::cout<<"begin _asm\n";
-    this->asmcode.addCode("\%include \"asm/aso_io.inc\"\n section .text\nglobal main\nmain:\npush ebx\nmov ebp,esp\n");
+    std::cout<<"size="<<quad_list.size()<<"\n";
+    this->asmcode.addCode("section .text\nglobal main\nmain:\npush ebx\nmov ebp,esp\n");
     for (size_t i = 0; i < this->quad_list.size(); i++) 
     {
         QuadItem *q = quad_list[i];
@@ -1115,7 +1023,11 @@ void AsmGenerate::generate()
             this->generatePower(*q);
         } else if (optype==OpType::uminus) {
             this->generateNeg(*q);
-        }/* else if (optype==OpType::GET_ADDRESS) {
+        }
+        else if (optype==OpType::PRINT){
+            this->generateprint(*q);
+        }
+            /* else if (optype==OpType::GET_ADDRESS) {
             this->generateGetAddress(q);
         }else if (optype==OpType::ASSIGN_ARRAY || optype==OpType::ASSIGN_POINTER) {
             this->generateAssignArray(q);
@@ -1123,7 +1035,8 @@ void AsmGenerate::generate()
             this->generateGetArrayValue(q);
         }*/
     }
-
+    //end
+    this->asmcode.addCode("pop ebx\nret\n");
     //write to asm
     
     std::ofstream out("asm/asm_io.asm",ios::app);

@@ -7,6 +7,7 @@ Symbol::Symbol(){
     this->idType = SymbolType::integer;
     this->width = 4;
     this->value= "0";
+    this->isUsed = false;
 }
 
 Symbol::Symbol(std::string name, SymbolType type, int width, std::string init_value){
@@ -14,6 +15,7 @@ Symbol::Symbol(std::string name, SymbolType type, int width, std::string init_va
     this->idType = type;
     this->width = width;
     this->value = init_value;
+    this->isUsed = false;
 }
 
 

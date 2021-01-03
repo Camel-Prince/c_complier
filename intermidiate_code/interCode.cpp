@@ -4,7 +4,23 @@
 #include <string>
 #include <iostream>
 #include<list>
-
+std::vector<QuadItem*> reduceUnusedSymbol(std::vector<QuadItem* > quad_list){
+    int len = quad_list.size();
+    int i=0;
+    while(i < len){
+        QuadItem* quad = quad_list[i];
+        if(quad->getOpType() == OpType::assign){
+            Symbol* re = quad->result.var;
+            if(re->getIsUsed() == false){
+                std::cout<<re->getIDName()<<" is not used!"<<std::endl;
+                quad_list.erase(quad_list.begin()+i);
+                continue;
+            }
+        }
+        i++;
+    }
+    return quad_list;
+}
 char isnumber(char ch){
     if(ch>='0' && ch<= '9'){
         return true;
@@ -715,6 +731,7 @@ InterCode:: InterCode(AbstractAstNode* root){
 void InterCode:: Root_Generate(){
     std::cout<<"Gen "<<root->content<<std::endl;
     Generate(this->root, this->rootTable);
+    // this->quad_list = reduceUnusedSymbol(this->quad_list);
     int len = this->quad_list.size();
     int i=0;
     while(i < len){
@@ -845,6 +862,7 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
             if(node_content == "Parentheses")
             {
                 Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
+                re->setIsUsed();
                 return re;
             }
             else if(node_content == "Addition" ||
@@ -855,8 +873,8 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
                 node_content == "Power")
             {
                         // 注意，先generate完子节点， 再生成result的tempVar；
-                Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
-                Symbol* arg2 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table); 
+                Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild(), symbol_table); arg1->setIsUsed();
+                Symbol* arg2 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table); arg2->setIsUsed();
                 Symbol* re = new Symbol("t"+std::to_string(temp_list.size()), SymbolType::temp_var, 4);
                 temp_list.push_back(re);
                 OpType op;
@@ -889,8 +907,8 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
             else if(node_content == "Assign")
             {
                 OpType op = assign;
-                Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
-                Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table);
+                Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table); re->setIsUsed();
+                Symbol* arg1 = Exp_Stmt_Generate(node->getFirstChild()->getNextSibling(), symbol_table); arg1->setIsUsed();
                 // 进行类型检查；type的值是枚举类型symbolType决定的；
                 int re_symbol_type = static_cast<int>(re->getSymbolType());
                 int arg1_symbol_type = static_cast<int>(arg1->getSymbolType());
@@ -1089,14 +1107,18 @@ Symbol* InterCode:: Exp_Stmt_Generate(AbstractAstNode* node, SymbolTable* symbol
             break;
         case static_cast<int>(AstNodeType::EXPRESSION): // EXPRESSION
         {
-            if(node_content == "Const_Exp"){
+            if(node_content == "Const_Exp")
+            {
                 Symbol* re = new Symbol(node->getFirstChild()->content);
                 return re;
-            }else if(node_content == "ID_Exp"){
+            }
+            else if(node_content == "ID_Exp")
+            {
                 Symbol* re = Exp_Stmt_Generate(node->getFirstChild(), symbol_table);
                 return re;
             }
-            else if(node_content == "For_Exp"){
+            else if(node_content == "For_Exp")
+            {
                 Exp_Stmt_Generate(node->getFirstChild(),symbol_table);
             }
         }
